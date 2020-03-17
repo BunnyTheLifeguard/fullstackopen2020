@@ -1,10 +1,13 @@
 import React from 'react';
 
-const Persons = ({ condition }) => {
+const Persons = ({ condition, removeContact }) => {
 	const nameList = () =>
 		condition.map((item) => (
-			<li key={item.name}>
-				{item.name}: {item.number}
+			<li key={item.id}>
+				{item.name}: {item.number}{' '}
+				<button onClick={(event) => removeContact(item.id, event)}>
+					Delete
+				</button>
 			</li>
 		));
 
