@@ -3,9 +3,15 @@ import Filter from './components/Filter';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import contactsService from './services/contacts';
+import { Notification, Error } from './components/Notification';
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
+	const [newName, setNewName] = useState('');
+	const [newNumber, setNewNumber] = useState('');
+	const [showAll, setShowAll] = useState('');
+	const [message, setMessage] = useState(null);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		contactsService.getAll().then((initialPhonebook) => {
@@ -13,9 +19,22 @@ const App = () => {
 		});
 	}, []);
 
-	const [newName, setNewName] = useState('');
-	const [newNumber, setNewNumber] = useState('');
-	const [showAll, setShowAll] = useState('');
+	const nameChange = (event) => {
+		setNewName(event.target.value);
+	};
+
+	const numberChange = (event) => {
+		setNewNumber(event.target.value);
+	};
+
+	const filter = (event) => setShowAll(event.target.value);
+
+	const visibleNumbers =
+		showAll === ''
+			? persons
+			: persons.filter((pers) =>
+					pers.name.toUpperCase().includes(showAll.toUpperCase())
+			  );
 
 	const addName = (event) => {
 		event.preventDefault();
@@ -32,10 +51,26 @@ const App = () => {
 				updatePerson.number = newNumber;
 				contactsService
 					.update(updatePerson.id, updatePerson)
-					.then((updated) => updated);
-				setPersons(persons);
-				setNewName('');
-				setNewNumber('');
+					.then((updatePerson) => {
+						setPersons(persons);
+						setNewName('');
+						setNewNumber('');
+						setMessage(`Changed number of ${updatePerson.name}`);
+						setTimeout(() => {
+							setMessage(null);
+						}, 2500);
+					})
+					.catch(() => {
+						setError(
+							`Information of ${updatePerson.name} has already been removed from server `
+						);
+						setTimeout(() => {
+							setError(null);
+						}, 2500);
+						setPersons(persons.filter((p) => p.id !== updatePerson.id));
+						setNewName('');
+						setNewNumber('');
+					});
 			}
 		} else if (numbers.includes(newNumber)) {
 			alert(`${newNumber} is already in phonebook`);
@@ -46,42 +81,34 @@ const App = () => {
 				setPersons(persons.concat(newContact));
 				setNewName('');
 				setNewNumber('');
+				setMessage(`Added ${newPerson.name}`);
+				setTimeout(() => {
+					setMessage(null);
+				}, 2500);
 			});
 		}
 	};
 
-	const nameChange = (event) => {
-		setNewName(event.target.value);
-	};
-
-	const numberChange = (event) => {
-		setNewNumber(event.target.value);
-	};
-
-	const filter = (event) => setShowAll(event.target.value);
-
 	const removeContact = (id, event) => {
 		event.preventDefault();
-		if (
-			window.confirm(`Delete ${persons.filter((p) => p.id === id)[0].name} ?`)
-		) {
+		const deletePerson = persons.filter((p) => p.id === id)[0].name;
+		if (window.confirm(`Delete ${deletePerson} ?`)) {
 			contactsService.remove(id);
 			setPersons(persons.filter((p) => p.id !== id));
+			setMessage(`Deleted ${deletePerson}`);
+			setTimeout(() => {
+				setMessage(null);
+			}, 2500);
 		} else {
 			return null;
 		}
 	};
 
-	const visibleNumbers =
-		showAll === ''
-			? persons
-			: persons.filter((pers) =>
-					pers.name.toUpperCase().includes(showAll.toUpperCase())
-			  );
-
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={message} />
+			<Error error={error} />
 			<Filter filter={filter} />
 			<h3>add a new</h3>
 			<PersonForm
