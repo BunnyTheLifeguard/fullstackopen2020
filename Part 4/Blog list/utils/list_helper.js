@@ -10,7 +10,19 @@ const totalLikes = (blogs) => {
 	return sum;
 };
 
+const favoriteBlog = (blogs) => {
+	const max =
+		blogs[
+			blogs
+				.map((blog) => blog.likes)
+				.indexOf(Math.max(...blogs.map((blog) => blog.likes)))
+		];
+	const { __v, _id, url, ...rest } = max;
+	return rest;
+};
+
 module.exports = {
 	dummy,
 	totalLikes,
+	favoriteBlog,
 };
