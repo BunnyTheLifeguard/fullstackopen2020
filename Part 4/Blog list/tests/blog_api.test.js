@@ -79,6 +79,24 @@ describe('API tests', () => {
 		expect(response.body).toHaveLength(initialBlogs.length + 1);
 		expect(contents).toContain('Test Test');
 	});
+
+	test('No likes equals zero', async () => {
+		const testBlog = {
+			title: 'Test Test',
+			author: 'Mr Test',
+			url: 'https://www.testoftest.com',
+		};
+
+		await api
+			.post('/api/blogs')
+			.send(testBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/);
+
+		const response = await api.get('/api/blogs');
+		const recentLikes = response.body[initialBlogs.length].likes;
+		expect(recentLikes).toBe(0);
+	});
 });
 
 afterAll(() => {
