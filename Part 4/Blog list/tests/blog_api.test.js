@@ -1,102 +1,87 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
-const app = require('../index');
-const Blog = require('../models/blog');
+const helper = require('./test_helper');
+const app = require('../app');
 
 const api = supertest(app);
-
-const initialBlogs = [
-	{
-		title: 'Test Blog',
-		author: 'Sir Test',
-		url: 'https://www.lifeofsirtest.com',
-		likes: 42,
-	},
-	{
-		title: 'Compuglobal Hypermeganet',
-		author: 'Homer J. Simpson',
-		url: 'https://www.homersimpson.com',
-		likes: 123,
-	},
-	{
-		title: 'Defend Sparta!',
-		author: 'King Leonidas',
-		url: 'https://www.300.com',
-		likes: 300,
-	},
-];
+const Blog = require('../models/blog');
 
 beforeEach(async () => {
 	await Blog.deleteMany({});
 
-	let blogObject = new Blog(initialBlogs[0]);
-	await blogObject.save();
-
-	blogObject = new Blog(initialBlogs[1]);
-	await blogObject.save();
-
-	blogObject = new Blog(initialBlogs[2]);
-	await blogObject.save();
+	const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
+	const promiseArray = blogObjects.map((blog) => blog.save());
+	await Promise.all(promiseArray);
 });
 
-describe('API tests', () => {
-	test('Blogs are returned as json', async () => {
-		await api
-			.get('/api/blogs')
-			.expect(200)
-			.expect('Content-Type', /application\/json/);
-	});
+test('Blogs returned as JSON', async () => {
+	await api
+		.get('/api/blogs')
+		.expect(200)
+		.expect('Content-Type', /application\/json/);
+});
 
-	test('Number of blogs in DB', async () => {
-		const response = await api.get('/api/blogs');
+test('Correct number of blogs returned', async () => {
+	const response = await api.get('/api/blogs');
 
-		expect(response.body).toHaveLength(3);
-	});
+	expect(response.body).toHaveLength(helper.initialBlogs.length);
+});
 
-	test('Verify id property name', async () => {
-		const response = await api.get('/api/blogs');
+test('Verify id property name', async () => {
+	const response = await api.get('/api/blogs');
 
-		expect(response.body[0].id).toBeDefined();
-	});
+	expect(response.body[0].id).toBeDefined();
+});
 
-	test('Verify POST request', async () => {
-		const testBlog = {
-			title: 'Test Test',
-			author: 'Mr Test',
-			url: 'https://www.testoftest.com',
-			likes: 24,
-		};
+test('Verify POST request', async () => {
+	const testBlog = {
+		title: 'Test Test',
+		author: 'Mr Test',
+		url: 'https://www.testoftest.com',
+		likes: 24,
+	};
 
-		await api
-			.post('/api/blogs')
-			.send(testBlog)
-			.expect(201)
-			.expect('Content-Type', /application\/json/);
+	await api
+		.post('/api/blogs')
+		.send(testBlog)
+		.expect(200)
+		.expect('Content-Type', /application\/json/);
 
-		const response = await api.get('/api/blogs');
-		const contents = response.body.map((r) => r.title);
+	const blogsAtEnd = await helper.blogsInDb();
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 
-		expect(response.body).toHaveLength(initialBlogs.length + 1);
-		expect(contents).toContain('Test Test');
-	});
+	const content = blogsAtEnd.map((blog) => blog.title);
+	expect(content).toContain('Test Test');
+});
 
-	test('No likes equals zero', async () => {
-		const testBlog = {
-			title: 'Test Test',
-			author: 'Mr Test',
-			url: 'https://www.testoftest.com',
-		};
+test('No likes equals zero', async () => {
+	const testBlog = {
+		title: 'Test Test Test',
+		author: 'Mrs Test',
+		url: 'https://www.testoftesttest.com',
+	};
 
-		await api
-			.post('/api/blogs')
-			.send(testBlog)
-			.expect(201)
-			.expect('Content-Type', /application\/json/);
+	await api
+		.post('/api/blogs')
+		.send(testBlog)
+		.expect(200)
+		.expect('Content-Type', /application\/json/);
 
-		const response = await api.get('/api/blogs');
-		const recentLikes = response.body[initialBlogs.length].likes;
-		expect(recentLikes).toBe(0);
-	});
+	const blogsAtEnd = await helper.blogsInDb();
+	const recentLikes = blogsAtEnd[helper.initialBlogs.length].likes;
+	expect(recentLikes).toBe(0);
+});
+
+test('No title & author => 400', async () => {
+	const testBlog = {
+		url: 'https://www.testoftest.com',
+		likes: 24,
+	};
+
+	await api.post('/api/blogs').send(testBlog).expect(400);
+
+	const blogsAtEnd = await helper.blogsInDb();
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
 });
 
 afterAll(() => {
