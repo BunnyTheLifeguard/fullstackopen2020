@@ -1,13 +1,15 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const config = require('./utils/config');
 require('express-async-errors');
 
 const app = express();
-const cors = require('cors');
 const blogsRouter = require('./controllers/blogs');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
-const mongoose = require('mongoose');
+
+mongoose.set('useFindAndModify', false);
 
 logger.info('Connecting to', config.MONGODB_URI);
 
