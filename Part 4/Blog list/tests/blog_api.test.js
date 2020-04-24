@@ -38,14 +38,18 @@ describe('Blogs API tests', () => {
 
 	test('Verify POST request', async () => {
 		const testBlog = {
-			title: 'Test Test',
-			author: 'Mr Test',
-			url: 'https://www.testoftest.com',
-			likes: 24,
+			title: 'Supertest Blog',
+			author: 'Sir Test',
+			url: 'https://www.st.com',
+			likes: 204,
 		};
+
+		const token =
+			'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNpciBUZXN0IiwiaWQiOiI1ZWEzMmIwOWU3NGQ5NGRkYzAzM2U4ZmIiLCJpYXQiOjE1ODc3NTM1Nzh9.tkqfRdJMrzOHftMQ01ki5FcxIqQ84KFey_BSJOLAX8I';
 
 		await api
 			.post('/api/blogs')
+			.set('Authorization', token)
 			.send(testBlog)
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -54,18 +58,22 @@ describe('Blogs API tests', () => {
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 
 		const content = blogsAtEnd.map((blog) => blog.title);
-		expect(content).toContain('Test Test');
+		expect(content).toContain('Supertest Blog');
 	});
 
 	test('No likes equals zero', async () => {
 		const testBlog = {
-			title: 'Test Test Test',
-			author: 'Mrs Test',
-			url: 'https://www.testoftesttest.com',
+			title: 'Zero Likes Blog',
+			author: 'Sir Test',
+			url: 'https://www.zerolikes.com',
 		};
+
+		const token =
+			'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNpciBUZXN0IiwiaWQiOiI1ZWEzMmIwOWU3NGQ5NGRkYzAzM2U4ZmIiLCJpYXQiOjE1ODc3NTM1Nzh9.tkqfRdJMrzOHftMQ01ki5FcxIqQ84KFey_BSJOLAX8I';
 
 		await api
 			.post('/api/blogs')
+			.set('Authorization', token)
 			.send(testBlog)
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
@@ -81,7 +89,14 @@ describe('Blogs API tests', () => {
 			likes: 24,
 		};
 
-		await api.post('/api/blogs').send(testBlog).expect(400);
+		const token =
+			'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNpciBUZXN0IiwiaWQiOiI1ZWEzMmIwOWU3NGQ5NGRkYzAzM2U4ZmIiLCJpYXQiOjE1ODc3NTM1Nzh9.tkqfRdJMrzOHftMQ01ki5FcxIqQ84KFey_BSJOLAX8I';
+
+		await api
+			.post('/api/blogs')
+			.set('Authorization', token)
+			.send(testBlog)
+			.expect(400);
 
 		const blogsAtEnd = await helper.blogsInDb();
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
@@ -91,7 +106,15 @@ describe('Blogs API tests', () => {
 		const blogsAtStart = await helper.blogsInDb();
 		const blogToDelete = blogsAtStart[0];
 
-		await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+		console.log(blogToDelete.id);
+
+		const token =
+			'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNpciBUZXN0IiwiaWQiOiI1ZWEzMmIwOWU3NGQ5NGRkYzAzM2U4ZmIiLCJpYXQiOjE1ODc3NTM1Nzh9.tkqfRdJMrzOHftMQ01ki5FcxIqQ84KFey_BSJOLAX8I';
+
+		await api
+			.delete(`/api/blogs/${blogToDelete.id}`)
+			.set('Authorization', token)
+			.expect(204);
 
 		const blogsAtEnd = await helper.blogsInDb();
 
@@ -111,25 +134,55 @@ describe('Blogs API tests', () => {
 
 		expect(blogs).toHaveLength(helper.initialBlogs.length);
 	});
+
+	test('Unsuccessful POST request without right authorization', async () => {
+		const testBlog = {
+			title: 'Supertest Blog',
+			author: 'Sir Test',
+			url: 'https://www.st.com',
+			likes: 204,
+		};
+
+		const token = 'bearer wrongToken';
+
+		await api
+			.post('/api/blogs')
+			.set('Authorization', token)
+			.send(testBlog)
+			.expect(401);
+
+		const blogsAtEnd = await helper.blogsInDb();
+		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+	});
 });
 
 describe('Users API tests', () => {
-	beforeEach(async () => {
-		await User.deleteMany({});
+	// beforeEach(async () => {
+	// 	await User.deleteMany({});
 
-		const passwordHash = await bcrypt.hash('secret', 10);
-		const user = new User({ username: 'root', passwordHash });
+	// 	for (const user of helper.initialUsers) {
+	// 		const passwordHash = await bcrypt.hash(user.password, 10);
+	// 		const userObject = new User({ username: user.username, passwordHash });
+	// 		await userObject.save();
+	// 	}
+	// });
 
-		await user.save();
-	});
+	// beforeEach(async () => {
+	// 	await User.deleteMany({});
+
+	// 	const passwordHash = await bcrypt.hash('secret', 10);
+	// 	const user = new User({ username: 'root', passwordHash });
+
+	// 	await user.save();
+	// });
 
 	test('Successful creation with a fresh username', async () => {
 		const usersAtStart = await helper.usersInDb();
 
 		const newUser = {
-			username: 'KingOfSparta',
-			name: 'King Leonidas',
-			password: 'Sparta300',
+			username: 'Milhouse',
+			name: 'Milhouse Mussolini van Houten',
+			password: 'eyebrows',
 		};
 
 		await api
@@ -149,8 +202,8 @@ describe('Users API tests', () => {
 		const usersAtStart = await helper.usersInDb();
 
 		const newUser = {
-			username: 'root',
-			name: 'Superuser',
+			username: 'Sir Test',
+			name: 'Test User',
 			password: 'mrpassword',
 		};
 
@@ -206,6 +259,13 @@ describe('Users API tests', () => {
 
 		const usersAtEnd = await helper.usersInDb();
 		expect(usersAtEnd).toHaveLength(usersAtStart.length);
+	});
+
+	test('Successful user login', async () => {
+		const loginUser = { username: 'Sir Test', password: 'mrtest' };
+
+		const result = await api.post('/api/login').send(loginUser);
+		// console.log(result.body);
 	});
 });
 
