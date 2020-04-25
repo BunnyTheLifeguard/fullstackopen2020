@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import { Notification, Error } from './components/Notification';
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
@@ -11,6 +12,8 @@ const App = () => {
 	const [title, setTitle] = useState('');
 	const [author, setAuthor] = useState('');
 	const [url, setUrl] = useState();
+	const [message, setMessage] = useState(null);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -31,12 +34,23 @@ const App = () => {
 		try {
 			blogService.setToken(user.token);
 			await blogService.create(newBlog);
+
+			setMessage(`A new blog ${title} by ${author} added`);
+			setTimeout(() => {
+				setMessage(null);
+			}, 3000);
 			setTitle('');
 			setAuthor('');
 			setUrl('');
 			blogService.getAll().then((blogs) => setBlogs(blogs));
 		} catch (exception) {
-			console.log(exception);
+			setError('Adding blog unsuccessful: Need more data!');
+			setTimeout(() => {
+				setError(null);
+			}, 3000);
+			setTitle('');
+			setAuthor('');
+			setUrl('');
 		}
 	};
 
@@ -52,18 +66,26 @@ const App = () => {
 
 			blogService.setToken(user.token);
 			setUser(user);
+			setMessage(`Successful login for ${username}`);
+			setTimeout(() => {
+				setMessage(null);
+			}, 3000);
 			setUsername('');
 			setPassword('');
 		} catch (exception) {
-			console.log('Wrong credentials');
-			console.log(exception);
+			setError('Wrong username or password');
+			setTimeout(() => {
+				setError(null);
+			}, 2500);
+			setUsername('');
+			setPassword('');
 		}
 	};
 
 	const handleLogout = async (event) => {
 		event.preventDefault();
 		try {
-			await window.localStorage.removeItem('loggedBlogAppUser');
+			window.localStorage.removeItem('loggedBlogAppUser');
 			setUser(null);
 		} catch (exception) {
 			console.log(exception);
@@ -84,7 +106,7 @@ const App = () => {
 			<div>
 				Password
 				<input
-					type="text"
+					type="password"
 					value={password}
 					name="Password"
 					onChange={({ target }) => setPassword(target.value)}
@@ -99,11 +121,15 @@ const App = () => {
 			{user === null ? (
 				<div>
 					<h2>Log in to application</h2>
+					<Notification message={message} />
+					<Error error={error} />
 					{loginForm()}
 				</div>
 			) : (
 				<div>
 					<h2>Blogs</h2>
+					<Notification message={message} />
+					<Error error={error} />
 					<form onSubmit={handleLogout}>
 						<p>
 							{user.name} logged in
