@@ -13,6 +13,14 @@ const App = () => {
 		blogService.getAll().then((blogs) => setBlogs(blogs));
 	}, []);
 
+	useEffect(() => {
+		const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON);
+			setUser(user);
+		}
+	}, []);
+
 	const handleLogin = async (event) => {
 		event.preventDefault();
 		try {
@@ -21,11 +29,25 @@ const App = () => {
 				password,
 			});
 
+			window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
+
+			// blogService.setToken(user.token);
 			setUser(user);
 			setUsername('');
 			setPassword('');
 		} catch (exception) {
 			console.log('Wrong credentials');
+			console.log(exception);
+		}
+	};
+
+	const handleLogout = async (event) => {
+		event.preventDefault();
+		try {
+			await window.localStorage.removeItem('loggedBlogAppUser');
+			setUser(null);
+		} catch (exception) {
+			console.log(exception);
 		}
 	};
 
@@ -63,7 +85,12 @@ const App = () => {
 			) : (
 				<div>
 					<h2>Blogs</h2>
-					<p>{user.name} logged in</p>
+					<form onSubmit={handleLogout}>
+						<p>
+							{user.name} logged in
+							<button type="submit">Logout</button>
+						</p>
+					</form>
 					{blogs.map((blog) => (
 						<Blog key={blog.id} blog={blog} />
 					))}
