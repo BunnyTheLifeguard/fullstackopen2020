@@ -73,19 +73,30 @@ const App = () => {
 					});
 			}
 		} else if (numbers.includes(newNumber)) {
-			alert(`${newNumber} is already in phonebook`);
+			setError(`${newNumber} is already in phonebook`);
+			setTimeout(() => {
+				setError(null);
+			}, 2500);
 		} else {
 			const newPerson = { name: newName, number: newNumber };
 
-			contactsService.create(newPerson).then((newContact) => {
-				setPersons(persons.concat(newContact));
-				setNewName('');
-				setNewNumber('');
-				setMessage(`Added ${newPerson.name}`);
-				setTimeout(() => {
-					setMessage(null);
-				}, 2500);
-			});
+			contactsService
+				.create(newPerson)
+				.then((newContact) => {
+					setPersons(persons.concat(newContact));
+					setNewName('');
+					setNewNumber('');
+					setMessage(`Added ${newPerson.name}`);
+					setTimeout(() => {
+						setMessage(null);
+					}, 2500);
+				})
+				.catch((error) => {
+					setError(error.response.data.error);
+					setTimeout(() => {
+						setError(null);
+					}, 2500);
+				});
 		}
 	};
 
