@@ -58,14 +58,24 @@ const App = () => {
 			setBlogs(blogs.sort((a, b) => b.likes - a.likes));
 		} catch (exception) {
 			setError('Like unsuccessful');
-			setTimeout(() => {
-				setError(null);
-			}, 3000);
+			setTimeout(() => setError(null), 3000);
 		}
 	};
 
 	const deleteBlog = async (blogObject) => {
-		console.log(blogObject);
+		try {
+			if (
+				window.confirm(`Remove ${blogObject.title} by ${blogObject.author}?`)
+			) {
+				await blogService.setToken(user.token);
+				await blogService.remove(blogObject);
+				const blogs = await blogService.getAll();
+				setBlogs(blogs.sort((a, b) => b.likes - a.likes));
+			}
+		} catch (exception) {
+			setError('Removal unsuccessful');
+			setTimeout(() => setError(null), 3000);
+		}
 	};
 
 	const handleLogin = async (event) => {
@@ -154,7 +164,13 @@ const App = () => {
 					{newBlogForm()}
 
 					{blogs.map((blog) => (
-						<Blog key={blog.id} blog={blog} addLike={addLike} />
+						<Blog
+							key={blog.id}
+							blog={blog}
+							addLike={addLike}
+							deleteBlog={deleteBlog}
+							username={user !== null ? user.username : ''}
+						/>
 					))}
 				</div>
 			)}

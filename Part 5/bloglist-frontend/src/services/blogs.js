@@ -30,7 +30,7 @@ const remove = async (objectToRemove) => {
 	const config = {
 		headers: { Authorization: token },
 	};
-	const idUrl = `/api/blogs${objectToRemove.id}`;
+	const idUrl = `/api/blogs/${objectToRemove.id}`;
 	const response = await axios.delete(idUrl, config);
 	return response.data;
 };

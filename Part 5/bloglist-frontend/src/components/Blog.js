@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Blog = ({ blog, addLike }) => {
+const Blog = ({ blog, addLike, deleteBlog, username }) => {
 	const blogStyle = {
 		paddingTop: 10,
 		paddingLeft: 2,
@@ -13,6 +13,10 @@ const Blog = ({ blog, addLike }) => {
 
 	const hideDetails = { display: details ? 'none' : '' };
 	const showDetails = { display: details ? '' : 'none' };
+	const showDelete = {
+		display:
+			blog.user !== undefined && blog.user.username === username ? '' : 'none',
+	};
 
 	const toggleDetails = () => setDetails(!details);
 
@@ -24,6 +28,10 @@ const Blog = ({ blog, addLike }) => {
 			likes: likedBlog.likes + 1,
 			id: likedBlog.id,
 		});
+	};
+
+	const removeBlog = (blogToRemove) => {
+		deleteBlog(blogToRemove);
 	};
 
 	return (
@@ -40,7 +48,9 @@ const Blog = ({ blog, addLike }) => {
 				<br />
 				{blog.user === undefined ? '' : blog.user.name}
 				<br />
-				<button>Remove</button>
+				<div style={showDelete}>
+					<button onClick={() => removeBlog(blog)}>Remove</button>
+				</div>
 			</div>
 		</div>
 	);
