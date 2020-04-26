@@ -52,6 +52,18 @@ const App = () => {
 		</Togglable>
 	);
 
+	const addLike = async (blogObject) => {
+		try {
+			await blogService.update(blogObject);
+			blogService.getAll().then((blogs) => setBlogs(blogs));
+		} catch (exception) {
+			setError('Like unsuccessful');
+			setTimeout(() => {
+				setError(null);
+			}, 3000);
+		}
+	};
+
 	const handleLogin = async (event) => {
 		event.preventDefault();
 		try {
@@ -138,7 +150,7 @@ const App = () => {
 					{newBlogForm()}
 
 					{blogs.map((blog) => (
-						<Blog key={blog.id} blog={blog} />
+						<Blog key={blog.id} blog={blog} addLike={addLike} />
 					))}
 				</div>
 			)}
