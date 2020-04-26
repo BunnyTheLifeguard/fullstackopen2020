@@ -11,9 +11,6 @@ const App = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [user, setUser] = useState(null);
-	const [title, setTitle] = useState('');
-	const [author, setAuthor] = useState('');
-	const [url, setUrl] = useState();
 	const [message, setMessage] = useState(null);
 	const [error, setError] = useState(null);
 
@@ -29,32 +26,31 @@ const App = () => {
 		}
 	}, []);
 
-	const addBlog = async (event) => {
-		event.preventDefault();
-		const newBlog = { title: title, author: author, url: url };
-
+	const addBlog = async (blogObject) => {
 		try {
 			blogService.setToken(user.token);
-			await blogService.create(newBlog);
+			await blogService.create(blogObject);
 
-			setMessage(`A new blog ${title} by ${author} added`);
+			setMessage(
+				`A new blog ${blogObject.title} by ${blogObject.author} added`
+			);
 			setTimeout(() => {
 				setMessage(null);
 			}, 3000);
-			setTitle('');
-			setAuthor('');
-			setUrl('');
 			blogService.getAll().then((blogs) => setBlogs(blogs));
 		} catch (exception) {
 			setError('Adding blog unsuccessful: Need more data!');
 			setTimeout(() => {
 				setError(null);
 			}, 3000);
-			setTitle('');
-			setAuthor('');
-			setUrl('');
 		}
 	};
+
+	const newBlogForm = () => (
+		<Togglable buttonLabel="Add Blog">
+			<BlogForm createBlog={addBlog} />
+		</Togglable>
+	);
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -139,17 +135,7 @@ const App = () => {
 						</p>
 					</form>
 
-					<Togglable buttonLabel="Add Blog">
-						<BlogForm
-							title={title}
-							author={author}
-							url={url}
-							handleTitleChange={({ target }) => setTitle(target.value)}
-							handleAuthorChange={({ target }) => setAuthor(target.value)}
-							handleUrlChange={({ target }) => setUrl(target.value)}
-							handleSubmit={addBlog}
-						/>
-					</Togglable>
+					{newBlogForm()}
 
 					{blogs.map((blog) => (
 						<Blog key={blog.id} blog={blog} />
