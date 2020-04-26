@@ -30,23 +30,18 @@ const App = () => {
 
 	const addBlog = async (blogObject) => {
 		try {
-			blogService.setToken(user.token);
+			await blogService.setToken(user.token);
 			await blogService.create(blogObject);
 
 			setMessage(
 				`A new blog ${blogObject.title} by ${blogObject.author} added`
 			);
-			setTimeout(() => {
-				setMessage(null);
-			}, 3000);
-			blogService
-				.getAll()
-				.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
+			setTimeout(() => setMessage(null), 3000);
+			const blogs = await blogService.getAll();
+			setBlogs(blogs.sort((a, b) => b.likes - a.likes));
 		} catch (exception) {
 			setError('Adding blog unsuccessful: Need more data!');
-			setTimeout(() => {
-				setError(null);
-			}, 3000);
+			setTimeout(() => setError(null), 3000);
 		}
 	};
 
@@ -59,15 +54,18 @@ const App = () => {
 	const addLike = async (blogObject) => {
 		try {
 			await blogService.update(blogObject);
-			blogService
-				.getAll()
-				.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
+			const blogs = await blogService.getAll();
+			setBlogs(blogs.sort((a, b) => b.likes - a.likes));
 		} catch (exception) {
 			setError('Like unsuccessful');
 			setTimeout(() => {
 				setError(null);
 			}, 3000);
 		}
+	};
+
+	const deleteBlog = async (blogObject) => {
+		console.log(blogObject);
 	};
 
 	const handleLogin = async (event) => {
