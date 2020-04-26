@@ -28,8 +28,11 @@ const App = () => {
 		}
 	}, []);
 
+	const blogFormRef = React.createRef();
+
 	const addBlog = async (blogObject) => {
 		try {
+			blogFormRef.current.toggleVisibility();
 			await blogService.setToken(user.token);
 			await blogService.create(blogObject);
 
@@ -46,7 +49,7 @@ const App = () => {
 	};
 
 	const newBlogForm = () => (
-		<Togglable buttonLabel="Add Blog">
+		<Togglable buttonLabel="Add Blog" ref={blogFormRef}>
 			<BlogForm createBlog={addBlog} />
 		</Togglable>
 	);
