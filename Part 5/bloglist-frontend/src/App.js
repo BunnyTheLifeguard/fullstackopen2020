@@ -39,7 +39,9 @@ const App = () => {
 			setTimeout(() => {
 				setMessage(null);
 			}, 3000);
-			blogService.getAll().then((blogs) => setBlogs(blogs));
+			blogService
+				.getAll()
+				.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
 		} catch (exception) {
 			setError('Adding blog unsuccessful: Need more data!');
 			setTimeout(() => {
@@ -57,7 +59,9 @@ const App = () => {
 	const addLike = async (blogObject) => {
 		try {
 			await blogService.update(blogObject);
-			blogService.getAll().then((blogs) => setBlogs(blogs));
+			blogService
+				.getAll()
+				.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
 		} catch (exception) {
 			setError('Like unsuccessful');
 			setTimeout(() => {
