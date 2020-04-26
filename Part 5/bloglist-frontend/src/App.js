@@ -7,7 +7,6 @@ import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
 
 const App = () => {
-	const [blogVisible, setBlogVisible] = useState(false);
 	const [blogs, setBlogs] = useState([]);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
@@ -29,31 +28,6 @@ const App = () => {
 			setUser(user);
 		}
 	}, []);
-
-	const NewBlogForm = () => {
-		const hideWhenVisible = { display: blogVisible ? 'none' : '' };
-		const showWhenVisible = { display: blogVisible ? '' : 'none' };
-
-		return (
-			<>
-				<div style={hideWhenVisible}>
-					<button onClick={() => setBlogVisible(true)}>New blog</button>
-				</div>
-				<div style={showWhenVisible}>
-					<BlogForm
-						title={title}
-						author={author}
-						url={url}
-						handleTitleChange={({ target }) => setTitle(target.value)}
-						handleAuthorChange={({ target }) => setAuthor(target.value)}
-						handleUrlChange={({ target }) => setUrl(target.value)}
-						handleSubmit={addBlog}
-					/>
-					<button onClick={() => setBlogVisible(false)}>Cancel</button>
-				</div>
-			</>
-		);
-	};
 
 	const addBlog = async (event) => {
 		event.preventDefault();
@@ -165,7 +139,17 @@ const App = () => {
 						</p>
 					</form>
 
-					{NewBlogForm()}
+					<Togglable buttonLabel="Add Blog">
+						<BlogForm
+							title={title}
+							author={author}
+							url={url}
+							handleTitleChange={({ target }) => setTitle(target.value)}
+							handleAuthorChange={({ target }) => setAuthor(target.value)}
+							handleUrlChange={({ target }) => setUrl(target.value)}
+							handleSubmit={addBlog}
+						/>
+					</Togglable>
 
 					{blogs.map((blog) => (
 						<Blog key={blog.id} blog={blog} />
