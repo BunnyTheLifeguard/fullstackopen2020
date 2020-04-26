@@ -3,8 +3,11 @@ import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import { Notification, Error } from './components/Notification';
+import BlogForm from './components/BlogForm';
+import Togglable from './components/Togglable';
 
 const App = () => {
+	const [blogVisible, setBlogVisible] = useState(false);
 	const [blogs, setBlogs] = useState([]);
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
@@ -26,6 +29,31 @@ const App = () => {
 			setUser(user);
 		}
 	}, []);
+
+	const NewBlogForm = () => {
+		const hideWhenVisible = { display: blogVisible ? 'none' : '' };
+		const showWhenVisible = { display: blogVisible ? '' : 'none' };
+
+		return (
+			<>
+				<div style={hideWhenVisible}>
+					<button onClick={() => setBlogVisible(true)}>New blog</button>
+				</div>
+				<div style={showWhenVisible}>
+					<BlogForm
+						title={title}
+						author={author}
+						url={url}
+						handleTitleChange={({ target }) => setTitle(target.value)}
+						handleAuthorChange={({ target }) => setAuthor(target.value)}
+						handleUrlChange={({ target }) => setUrl(target.value)}
+						handleSubmit={addBlog}
+					/>
+					<button onClick={() => setBlogVisible(false)}>Cancel</button>
+				</div>
+			</>
+		);
+	};
 
 	const addBlog = async (event) => {
 		event.preventDefault();
@@ -136,37 +164,9 @@ const App = () => {
 							<button type="submit">Logout</button>
 						</p>
 					</form>
-					<h2>Create new</h2>
-					<form onSubmit={addBlog}>
-						<div>
-							Title:
-							<input
-								type="text"
-								value={title}
-								name="title"
-								onChange={({ target }) => setTitle(target.value)}
-							/>
-						</div>
-						<div>
-							Author:
-							<input
-								type="text"
-								value={author}
-								name="author"
-								onChange={({ target }) => setAuthor(target.value)}
-							/>
-						</div>
-						<div>
-							Url:
-							<input
-								type="text"
-								value={url}
-								name="url"
-								onChange={({ target }) => setUrl(target.value)}
-							/>
-						</div>
-						<button type="submit">Create</button>
-					</form>
+
+					{NewBlogForm()}
+
 					{blogs.map((blog) => (
 						<Blog key={blog.id} blog={blog} />
 					))}
