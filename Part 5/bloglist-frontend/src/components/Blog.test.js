@@ -11,7 +11,9 @@ test('Check render only blog title & author', () => {
 		likes: 42,
 	};
 
-	const component = render(<Blog blog={blog} />);
+	const component = render(
+		<Blog blog={blog} addLike={() => ''} deleteBlog={() => ''} username="" />
+	);
 
 	// component.debug();
 
@@ -32,7 +34,15 @@ test('Clicking the "View" button shows details', () => {
 
 	const mockHandler = jest.fn();
 
-	const component = render(<Blog blog={blog} toggleDetails={mockHandler} />);
+	const component = render(
+		<Blog
+			blog={blog}
+			toggleDetails={mockHandler}
+			addLike={() => ''}
+			deleteBlog={() => ''}
+			username=""
+		/>
+	);
 
 	// component.debug();
 
@@ -57,7 +67,13 @@ test('Clicking like button twice', () => {
 	const addLike = jest.fn();
 
 	const component = render(
-		<Blog blog={blog} toggleDetails={toggleDetails} addLike={addLike} />
+		<Blog
+			blog={blog}
+			toggleDetails={toggleDetails}
+			addLike={addLike}
+			deleteBlog={() => ''}
+			username=""
+		/>
 	);
 
 	const view = component.getByText('View');
