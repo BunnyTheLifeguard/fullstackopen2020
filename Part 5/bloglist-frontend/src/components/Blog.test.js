@@ -44,3 +44,28 @@ test('Clicking the "View" button shows details', () => {
 	expect(withDetails).toHaveTextContent('www.test.te');
 	expect(withDetails).toHaveTextContent('42');
 });
+
+test('Clicking like button twice', () => {
+	const blog = {
+		title: 'testblog',
+		author: 'mrtest',
+		url: 'www.test.te',
+		likes: 42,
+	};
+
+	const toggleDetails = jest.fn();
+	const addLike = jest.fn();
+
+	const component = render(
+		<Blog blog={blog} toggleDetails={toggleDetails} addLike={addLike} />
+	);
+
+	const view = component.getByText('View');
+	fireEvent.click(view);
+
+	const like = component.container.querySelector('.like');
+	fireEvent.click(like);
+	fireEvent.click(like);
+
+	expect(addLike.mock.calls).toHaveLength(2);
+});

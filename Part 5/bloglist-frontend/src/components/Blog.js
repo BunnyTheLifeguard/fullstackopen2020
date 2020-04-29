@@ -45,7 +45,10 @@ const Blog = ({ blog, addLike, deleteBlog, username }) => {
 				<br />
 				{blog.url}
 				<br />
-				{blog.likes} <button onClick={() => likeBlog(blog)}>Like</button>
+				{blog.likes}{' '}
+				<button onClick={() => likeBlog(blog)} className="like">
+					Like
+				</button>
 				<br />
 				{blog.user === undefined ? '' : blog.user.name}
 				<br />
