@@ -15,7 +15,11 @@ const Notification = ({ message }) => {
 	if (message === null) {
 		return null;
 	} else {
-		return <div style={messageStyle}>{message}</div>;
+		return (
+			<div id="notification" style={messageStyle}>
+				{message}
+			</div>
+		);
 	}
 };
 
@@ -34,7 +38,11 @@ const Error = ({ error }) => {
 	if (error === null) {
 		return null;
 	} else {
-		return <div style={errorStyle}>{error}</div>;
+		return (
+			<div id="error" style={errorStyle}>
+				{error}
+			</div>
+		);
 	}
 };
 
