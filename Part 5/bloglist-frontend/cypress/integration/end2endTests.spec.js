@@ -62,5 +62,17 @@ describe('Blog list E2E tests', function () {
 			cy.get('#saveBlog').click();
 			cy.contains('Mhh, Donuts');
 		});
+
+		it.only('Blog can be liked', function () {
+			cy.contains('Add Blog').click();
+			cy.get('#title').type('Mhh, Donuts');
+			cy.get('#author').type('Homer J. Simpson');
+			cy.get('#url').type('www.donuts.com');
+			cy.get('#saveBlog').click();
+
+			cy.get('.noDetails').contains('View').click();
+			cy.get('.showDetails').contains('Like').click();
+			cy.get('.showDetails').contains('1');
+		});
 	});
 });
