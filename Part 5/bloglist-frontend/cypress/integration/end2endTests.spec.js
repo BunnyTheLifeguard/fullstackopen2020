@@ -1,4 +1,4 @@
-describe('Blog list E2E tests', function () {
+describe.only('Blog list E2E tests', function () {
 	beforeEach(function () {
 		cy.request('POST', 'http://localhost:3001/api/testing/reset');
 		const user1 = {
@@ -8,7 +8,7 @@ describe('Blog list E2E tests', function () {
 		};
 		const user2 = {
 			name: 'King Leonidas',
-			username: ' KingOfSparta',
+			username: 'KingOfSparta',
 			password: 'Sparta300',
 		};
 		cy.request('POST', 'http://localhost:3001/api/users/', user1);
@@ -47,7 +47,7 @@ describe('Blog list E2E tests', function () {
 		});
 	});
 
-	describe.only('When logged in', function () {
+	describe('When logged in', function () {
 		beforeEach(function () {
 			cy.get('#username').type('homersimpson');
 			cy.get('#password').type('donuts');
@@ -63,7 +63,7 @@ describe('Blog list E2E tests', function () {
 			cy.contains('Mhh, Donuts');
 		});
 
-		it.only('Blog can be liked', function () {
+		it('Blog can be liked', function () {
 			cy.contains('Add Blog').click();
 			cy.get('#title').type('Mhh, Donuts');
 			cy.get('#author').type('Homer J. Simpson');
@@ -74,5 +74,39 @@ describe('Blog list E2E tests', function () {
 			cy.get('.showDetails').contains('Like').click();
 			cy.get('.showDetails').contains('1');
 		});
+
+		it('Blog can be deleted', function () {
+			cy.contains('Add Blog').click();
+			cy.get('#title').type('Mhh, Donuts');
+			cy.get('#author').type('Homer J. Simpson');
+			cy.get('#url').type('www.donuts.com');
+			cy.get('#saveBlog').click();
+
+			cy.get('.noDetails').contains('View').click();
+			cy.get('.showDetails').contains('Remove').click();
+			cy.get('html').should('not.contain', 'Mhh, Donuts');
+		});
+	});
+
+	it.only('Blog can not be deleted by other user', function () {
+		cy.get('#username').type('homersimpson');
+		cy.get('#password').type('donuts');
+		cy.get('#loginButton').click();
+
+		cy.contains('Add Blog').click();
+		cy.get('#title').type('Mhh, Donuts');
+		cy.get('#author').type('Homer J. Simpson');
+		cy.get('#url').type('www.donuts.com');
+		cy.get('#saveBlog').click();
+
+		cy.contains('Logout').click();
+
+		cy.get('#username').type('KingOfSparta');
+		cy.get('#password').type('Sparta300');
+		cy.get('#loginButton').click();
+
+		cy.get('.noDetails').contains('View').click();
+		cy.get('#remove').should('not.be.visible', 'Remove');
+		cy.get('html').should('contain', 'Mhh, Donuts');
 	});
 });

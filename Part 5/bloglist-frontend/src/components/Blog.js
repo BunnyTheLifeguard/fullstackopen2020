@@ -53,7 +53,9 @@ const Blog = ({ blog, addLike, deleteBlog, username }) => {
 				{blog.user === undefined ? '' : blog.user.name}
 				<br />
 				<div style={showDelete}>
-					<button onClick={() => removeBlog(blog)}>Remove</button>
+					<button id="remove" onClick={() => removeBlog(blog)}>
+						Remove
+					</button>
 				</div>
 			</div>
 		</div>
