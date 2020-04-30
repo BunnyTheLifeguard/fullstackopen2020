@@ -170,15 +170,17 @@ const App = () => {
 
 					{newBlogForm()}
 
-					{blogs.map((blog) => (
-						<Blog
-							key={blog.id}
-							blog={blog}
-							addLike={addLike}
-							deleteBlog={deleteBlog}
-							username={user !== null ? user.username : ''}
-						/>
-					))}
+					<div className="blogList">
+						{blogs.map((blog) => (
+							<Blog
+								key={blog.id}
+								blog={blog}
+								addLike={addLike}
+								deleteBlog={deleteBlog}
+								username={user !== null ? user.username : ''}
+							/>
+						))}
+					</div>
 				</div>
 			)}
 		</div>
