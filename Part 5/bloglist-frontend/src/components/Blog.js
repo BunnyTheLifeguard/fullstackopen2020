@@ -40,7 +40,7 @@ const Blog = ({ blog, addLike, deleteBlog, username }) => {
 			<div style={hideDetails} className="hideDetails">
 				{blog.title} {blog.author} <button onClick={toggleDetails}>View</button>
 			</div>
-			<div className="showDetails" style={showDetails} className="showDetails">
+			<div className="showDetails" style={showDetails}>
 				{blog.title} {blog.author} <button onClick={toggleDetails}>Hide</button>
 				<br />
 				{blog.url}
