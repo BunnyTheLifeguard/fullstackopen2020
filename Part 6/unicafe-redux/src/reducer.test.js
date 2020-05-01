@@ -63,7 +63,7 @@ describe('unicafe reducer', () => {
 		});
 	});
 
-	test('nothing gets changed', () => {
+	test('reset counters', () => {
 		const action = {
 			type: 'ZERO',
 		};
