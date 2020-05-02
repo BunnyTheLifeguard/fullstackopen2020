@@ -24,6 +24,19 @@ export const upvote = (id) => {
 	};
 };
 
+export const createAnecdote = (content) => {
+	console.log(content);
+
+	return {
+		type: 'NEW_ANECDOTE',
+		data: {
+			content,
+			id: getId(),
+			votes: 0,
+		},
+	};
+};
+
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
@@ -36,6 +49,8 @@ const reducer = (state = initialState, action) => {
 			const toVote = state.find((a) => a.id === anecdoteId);
 			const upvoted = { ...toVote, votes: (toVote.votes += 1) };
 			return state.map((a) => (a.id !== anecdoteId ? a : upvoted));
+		case 'NEW_ANECDOTE':
+			return state.concat(action.data);
 		default:
 			return state;
 	}
