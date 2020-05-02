@@ -1,7 +1,4 @@
-const notificationReducer = (
-	state = 'Notifications displayed here',
-	action
-) => {
+const notificationReducer = (state = null, action) => {
 	switch (action.type) {
 		case 'VOTE_MSG':
 			return (state = `You voted '${action.notification}'`);
