@@ -40,6 +40,7 @@ export const createAnecdote = (content) => {
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
+	// state.sort((a, b) => b.votes - a.votes);
 	console.log('state now: ', state);
 	console.log('action', action);
 
@@ -48,11 +49,13 @@ const reducer = (state = initialState, action) => {
 			const anecdoteId = action.data.id;
 			const toVote = state.find((a) => a.id === anecdoteId);
 			const upvoted = { ...toVote, votes: (toVote.votes += 1) };
-			return state.map((a) => (a.id !== anecdoteId ? a : upvoted));
+			return state
+				.map((a) => (a.id !== anecdoteId ? a : upvoted))
+				.sort((a, b) => b.votes - a.votes);
 		case 'NEW_ANECDOTE':
-			return state.concat(action.data);
+			return state.concat(action.data).sort((a, b) => b.votes - a.votes);
 		default:
-			return state;
+			return state.sort((a, b) => b.votes - a.votes);
 	}
 };
 
