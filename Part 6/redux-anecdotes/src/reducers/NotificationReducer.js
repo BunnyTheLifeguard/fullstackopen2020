@@ -3,8 +3,12 @@ const notificationReducer = (
 	action
 ) => {
 	switch (action.type) {
-		case 'SET_MSG':
+		case 'VOTE_MSG':
 			return (state = `You voted '${action.notification}'`);
+		case 'ADD_MSG':
+			return (state = `You added '${action.notification}'`);
+		case 'CLR_MSG':
+			return (state = action.notification);
 		default:
 			return state;
 	}
@@ -12,8 +16,22 @@ const notificationReducer = (
 
 export const voteMsg = (notification) => {
 	return {
-		type: 'SET_MSG',
+		type: 'VOTE_MSG',
 		notification,
+	};
+};
+
+export const createMsg = (notification) => {
+	return {
+		type: 'ADD_MSG',
+		notification,
+	};
+};
+
+export const clearMsg = () => {
+	return {
+		type: 'CLR_MSG',
+		notification: null,
 	};
 };
 
