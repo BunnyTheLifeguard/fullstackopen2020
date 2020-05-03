@@ -13,7 +13,7 @@ const AnecdoteList = () => {
 			: anecdotes;
 
 	const vote = (anecdote) => {
-		dispatch(upvote(anecdote.id));
+		dispatch(upvote(anecdote));
 		dispatch(voteMsg(anecdote.content));
 		setTimeout(() => {
 			dispatch(clearMsg());
