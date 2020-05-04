@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Thesis on Donuts - Part 2",
+  "author": "Homer J. Simpson",
+  "url": "https://www.mhh-donuts.com",
+  "likes": 246,
+  "userId": "5ea2b8324b8b876ca56261ae"
+}
