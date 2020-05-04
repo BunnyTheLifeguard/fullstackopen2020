@@ -6,8 +6,8 @@ const blogReducer = (state = [], action) => {
 			return action.data;
 		case 'ADD':
 			return action.data;
-		case 'VOTE':
-			return state;
+		case 'LIKE':
+			return action.data;
 		case 'REMOVE':
 			return state;
 		default:
@@ -36,6 +36,15 @@ export const createBlog = (blog, token) => {
 			type: 'ADD',
 			data: sorted,
 		});
+	};
+};
+
+export const likeBlog = (blog) => {
+	return async (dispatch) => {
+		await blogService.update(blog);
+		const blogs = await blogService.getAll();
+		const sorted = blogs.sort((a, b) => b.likes - a.likes);
+		dispatch({ type: 'LIKE', data: sorted });
 	};
 };
 
