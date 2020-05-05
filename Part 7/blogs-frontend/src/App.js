@@ -168,6 +168,8 @@ const App = () => {
 					<h2>Blogs</h2>
 					<Notification message={notification} />
 					<Error error={error} />
+					<Link to="/blogs">blogs </Link>
+					<Link to="/users">users </Link>
 					<form onSubmit={handleLogout}>
 						<p>{user.name} logged in</p>
 						<button type="submit">Logout</button>
