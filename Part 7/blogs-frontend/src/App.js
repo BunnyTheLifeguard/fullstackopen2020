@@ -8,6 +8,7 @@ import {
 } from './reducers/blogReducer';
 import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
+import { activeUser } from './reducers/userReducer';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -19,7 +20,6 @@ const App = () => {
 	const dispatch = useDispatch();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-	const [user, setUser] = useState(null);
 
 	useEffect(() => {
 		dispatch(initializeBlogs());
@@ -29,13 +29,14 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
+			dispatch(activeUser(user));
 		}
-	}, []);
+	}, [dispatch]);
 
 	const allBlogs = useSelector(({ blogs }) => blogs);
 	const notification = useSelector(({ notification }) => notification);
 	const error = useSelector(({ error }) => error);
+	const user = useSelector(({ user }) => user);
 
 	const blogFormRef = React.createRef();
 	const newBlogForm = () => (
@@ -85,19 +86,14 @@ const App = () => {
 				username,
 				password,
 			});
-
 			window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
-
 			blogService.setToken(user.token);
-			setUser(user);
-
+			dispatch(activeUser(user));
 			dispatch(setMessage(`Successful login for ${username}`, 3));
-
 			setUsername('');
 			setPassword('');
 		} catch (exception) {
 			dispatch(setError('Wrong username or password', 3));
-
 			setUsername('');
 			setPassword('');
 		}
@@ -107,7 +103,7 @@ const App = () => {
 		event.preventDefault();
 		try {
 			window.localStorage.removeItem('loggedBlogAppUser');
-			setUser(null);
+			dispatch(activeUser(null));
 		} catch (exception) {
 			console.log(exception);
 		}
