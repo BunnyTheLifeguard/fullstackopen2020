@@ -13,11 +13,12 @@ import { setError } from './reducers/errorReducer';
 import { activeUser } from './reducers/userReducer';
 import { initializeUsers } from './reducers/userListReducer';
 
-import Blog from './components/Blog';
+import Bloglist from './components/Bloglist';
 import { Notification, Error } from './components/Notification';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
 import User from './components/User';
+import Blog from './components/Blog';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -52,6 +53,14 @@ const App = () => {
 			<BlogForm createBlog={addBlog} />
 		</Togglable>
 	);
+
+	const blogStyle = {
+		paddingTop: 10,
+		paddingLeft: 2,
+		border: 'solid',
+		borderWidth: 1,
+		marginBottom: 5,
+	};
 
 	const addBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
@@ -168,6 +177,9 @@ const App = () => {
 						<Route path="/users/:id">
 							<User allUsers={allUsers} />
 						</Route>
+						<Route path="/blogs/:id">
+							<Blog allBlogs={allBlogs} addLike={addLike} />
+						</Route>
 						<Route path="/users">
 							<h2>Users</h2>
 							<table>
@@ -192,17 +204,18 @@ const App = () => {
 						<Route path="/">
 							{newBlogForm()}
 
-							<div className="blogList">
+							<ul
+								className="blogList"
+								style={{ listStyleType: 'none', paddingLeft: 0 }}
+							>
 								{allBlogs.map((blog) => (
-									<Blog
-										key={blog.id}
-										blog={blog}
-										addLike={addLike}
-										deleteBlog={deleteBlog}
-										username={user !== null ? user.username : ''}
-									/>
+									<li key={blog.id} style={blogStyle}>
+										<Link to={`/blogs/${blog.id}`}>
+											{blog.title} {blog.author}
+										</Link>
+									</li>
 								))}
-							</div>
+							</ul>
 						</Route>
 					</Switch>
 				</div>

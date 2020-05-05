@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
-import Blog from './Blog';
+import Bloglist from './Blog';
 
 test('Check render only blog title & author', () => {
 	const blog = {
@@ -12,7 +12,12 @@ test('Check render only blog title & author', () => {
 	};
 
 	const component = render(
-		<Blog blog={blog} addLike={() => ''} deleteBlog={() => ''} username="" />
+		<Bloglist
+			blog={blog}
+			addLike={() => ''}
+			deleteBlog={() => ''}
+			username=""
+		/>
 	);
 
 	// component.debug();
@@ -35,7 +40,7 @@ test('Clicking the "View" button shows details', () => {
 	const mockHandler = jest.fn();
 
 	const component = render(
-		<Blog
+		<Bloglist
 			blog={blog}
 			toggleDetails={mockHandler}
 			addLike={() => ''}
@@ -67,7 +72,7 @@ test('Clicking like button twice', () => {
 	const addLike = jest.fn();
 
 	const component = render(
-		<Blog
+		<Bloglist
 			blog={blog}
 			toggleDetails={toggleDetails}
 			addLike={addLike}
