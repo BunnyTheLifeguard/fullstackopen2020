@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
 	initializeBlogs,
 	createBlog,
@@ -11,12 +12,15 @@ import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
 import { activeUser } from './reducers/userReducer';
 import { initializeUsers } from './reducers/userListReducer';
+
 import Blog from './components/Blog';
-import blogService from './services/blogs';
-import loginService from './services/login';
 import { Notification, Error } from './components/Notification';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
+import User from './components/User';
+
+import blogService from './services/blogs';
+import loginService from './services/login';
 
 const App = () => {
 	const dispatch = useDispatch();
@@ -161,6 +165,9 @@ const App = () => {
 					</form>
 
 					<Switch>
+						<Route path="/users/:id">
+							<User allUsers={allUsers} />
+						</Route>
 						<Route path="/users">
 							<h2>Users</h2>
 							<table>
@@ -173,7 +180,9 @@ const App = () => {
 									</tr>
 									{allUsers.map((user) => (
 										<tr key={user.id} className="user">
-											<td>{user.name}</td>
+											<td>
+												<Link to={`/users/${user.id}`}>{user.name}</Link>
+											</td>
 											<td>{user.blogs.length}</td>
 										</tr>
 									))}
