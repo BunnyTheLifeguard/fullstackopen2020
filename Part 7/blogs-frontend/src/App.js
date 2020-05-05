@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { initializeBlogs, createBlog, likeBlog } from './reducers/blogReducer';
+import {
+	initializeBlogs,
+	createBlog,
+	likeBlog,
+	removeBlog,
+} from './reducers/blogReducer';
 import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
 import Blog from './components/Blog';
@@ -58,7 +63,6 @@ const App = () => {
 	};
 
 	const addLike = (blogObject) => {
-		console.log(blogObject);
 		dispatch(likeBlog(blogObject)).catch((exception) => {
 			console.log(exception);
 			dispatch(setError('Like unsuccessful', 3));
@@ -66,19 +70,11 @@ const App = () => {
 	};
 
 	const deleteBlog = async (blogObject) => {
-		try {
-			if (
-				window.confirm(`Remove ${blogObject.title} by ${blogObject.author}?`)
-			) {
-				await blogService.setToken(user.token);
-				await blogService.remove(blogObject);
-				// const blogs = await blogService.getAll();
-				// setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-			}
-		} catch (exception) {
-			// setError('Removal unsuccessful');
-			// setTimeout(() => setError(null), 3000);
-			dispatch(setError('Removal unsuccessful', 3));
+		if (window.confirm(`Remove ${blogObject.title} by ${blogObject.author}?`)) {
+			dispatch(removeBlog(blogObject, user.token)).catch((exception) => {
+				dispatch(setError('Removal unsuccessful', 3));
+				console.log(exception);
+			});
 		}
 	};
 
