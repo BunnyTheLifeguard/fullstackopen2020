@@ -1,7 +1,7 @@
 const userReducer = (state = null, action) => {
 	switch (action.type) {
 		case 'SET_USER':
-			return action.user;
+			return action.activeUser;
 		default:
 			return state;
 	}
@@ -9,7 +9,7 @@ const userReducer = (state = null, action) => {
 
 export const activeUser = (user) => {
 	return async (dispatch) => {
-		dispatch({ type: 'SET_USER', user: user });
+		dispatch({ type: 'SET_USER', activeUser: user });
 	};
 };
 

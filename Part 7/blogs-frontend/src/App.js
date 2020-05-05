@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	initializeBlogs,
@@ -9,6 +10,7 @@ import {
 import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
 import { activeUser } from './reducers/userReducer';
+import { initializeUsers } from './reducers/userListReducer';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -23,6 +25,7 @@ const App = () => {
 
 	useEffect(() => {
 		dispatch(initializeBlogs());
+		dispatch(initializeUsers());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -36,7 +39,8 @@ const App = () => {
 	const allBlogs = useSelector(({ blogs }) => blogs);
 	const notification = useSelector(({ notification }) => notification);
 	const error = useSelector(({ error }) => error);
-	const user = useSelector(({ user }) => user);
+	const user = useSelector(({ activeUser }) => activeUser);
+	const allUsers = useSelector(({ users }) => users);
 
 	const blogFormRef = React.createRef();
 	const newBlogForm = () => (
@@ -138,7 +142,7 @@ const App = () => {
 	);
 
 	return (
-		<div>
+		<Router>
 			{user === null ? (
 				<div>
 					<h2>Log in to application</h2>
@@ -152,28 +156,49 @@ const App = () => {
 					<Notification message={notification} />
 					<Error error={error} />
 					<form onSubmit={handleLogout}>
-						<p>
-							{user.name} logged in
-							<button type="submit">Logout</button>
-						</p>
+						<p>{user.name} logged in</p>
+						<button type="submit">Logout</button>
 					</form>
 
-					{newBlogForm()}
+					<Switch>
+						<Route path="/users">
+							<h2>Users</h2>
+							<table>
+								<tbody>
+									<tr>
+										<td>&nbsp;</td>
+										<td>
+											<strong>blogs created</strong>
+										</td>
+									</tr>
+									{allUsers.map((user) => (
+										<tr key={user.id} className="user">
+											<td>{user.name}</td>
+											<td>{user.blogs.length}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</Route>
+						<Route path="/">
+							{newBlogForm()}
 
-					<div className="blogList">
-						{allBlogs.map((blog) => (
-							<Blog
-								key={blog.id}
-								blog={blog}
-								addLike={addLike}
-								deleteBlog={deleteBlog}
-								username={user !== null ? user.username : ''}
-							/>
-						))}
-					</div>
+							<div className="blogList">
+								{allBlogs.map((blog) => (
+									<Blog
+										key={blog.id}
+										blog={blog}
+										addLike={addLike}
+										deleteBlog={deleteBlog}
+										username={user !== null ? user.username : ''}
+									/>
+								))}
+							</div>
+						</Route>
+					</Switch>
 				</div>
 			)}
-		</div>
+		</Router>
 	);
 };
 
