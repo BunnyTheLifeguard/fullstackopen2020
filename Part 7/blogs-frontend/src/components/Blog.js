@@ -1,9 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-const Blog = ({ allBlogs, addLike }) => {
+const Blog = ({ allBlogs, addLike, allComments }) => {
 	const id = useParams().id;
 	const blog = allBlogs.find((b) => b.id === id);
+	const comments = allComments.filter(({ blogId }) => blogId === id);
 
 	const likeBlog = (likedBlog) => {
 		addLike({
@@ -26,7 +27,13 @@ const Blog = ({ allBlogs, addLike }) => {
 					{blog.likes} likes{' '}
 					<button onClick={() => likeBlog(blog)}>Like</button>
 				</div>
-				<div>added by {blog.user.name}</div>
+				{blog.user === undefined ? null : <div>added by {blog.user.name}</div>}
+				<h3>comments</h3>
+				<ul>
+					{comments === undefined
+						? null
+						: comments.map((c) => <li key={c.id}>{c.comment}</li>)}
+				</ul>
 			</div>
 		);
 	}

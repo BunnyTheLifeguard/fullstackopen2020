@@ -35,4 +35,22 @@ const remove = async (objectToRemove) => {
 	return response.data;
 };
 
-export default { getAll, create, update, remove, setToken };
+const getComments = async (blogId) => {
+	const response = await axios.get(`${baseUrl}/${blogId}/comments`);
+	return response.data;
+};
+
+const createComment = async (comment, blogId) => {
+	const response = await axios.post(`${baseUrl}/${blogId}/comments`, comment);
+	return response.data;
+};
+
+export default {
+	getAll,
+	create,
+	update,
+	remove,
+	setToken,
+	getComments,
+	createComment,
+};

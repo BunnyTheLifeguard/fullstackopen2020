@@ -2,10 +2,21 @@ const blogsRouter = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const Comment = require('../models/comment');
 
 blogsRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
 	response.json(blogs.map((blog) => blog.toJSON()));
+});
+
+blogsRouter.get('/:id', async (request, response) => {
+	const blog = await Blog.findById(request.params.id);
+	response.json(blog.toJSON());
+});
+
+blogsRouter.get('/:id/comments', async (request, response) => {
+	const comments = await Comment.find({});
+	response.json(comments.map((comment) => comment.toJSON()));
 });
 
 blogsRouter.post('/', async (request, response) => {
@@ -30,6 +41,17 @@ blogsRouter.post('/', async (request, response) => {
 	await user.save();
 
 	response.json(savedBlog.toJSON());
+});
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+	const { body } = request;
+	const blog = await Blog.findById(request.params.id);
+	// const { id } = blog._id;
+	// console.log(blog);
+	// const id = JSON.stringify(blog._id);
+	const comment = new Comment({ comment: body.comment, blogId: blog._id });
+	const savedComment = await comment.save();
+	response.json(savedComment.toJSON());
 });
 
 blogsRouter.delete('/:id', async (request, response) => {

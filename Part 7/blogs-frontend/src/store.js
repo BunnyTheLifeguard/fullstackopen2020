@@ -7,6 +7,7 @@ import notificationReducer from './reducers/notificationReducer';
 import errorReducer from './reducers/errorReducer';
 import userReducer from './reducers/userReducer';
 import userListReducer from './reducers/userListReducer';
+import commentReducer from './reducers/commentReducer';
 
 const reducer = combineReducers({
 	blogs: blogReducer,
@@ -14,6 +15,7 @@ const reducer = combineReducers({
 	error: errorReducer,
 	activeUser: userReducer,
 	users: userListReducer,
+	comments: commentReducer,
 });
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));

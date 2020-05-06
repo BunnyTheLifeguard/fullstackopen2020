@@ -12,8 +12,9 @@ import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
 import { activeUser } from './reducers/userReducer';
 import { initializeUsers } from './reducers/userListReducer';
+import { initializeComments } from './reducers/commentReducer';
 
-import Bloglist from './components/Bloglist';
+// import Bloglist from './components/Bloglist';
 import { Notification, Error } from './components/Notification';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
@@ -31,6 +32,7 @@ const App = () => {
 	useEffect(() => {
 		dispatch(initializeBlogs());
 		dispatch(initializeUsers());
+		dispatch(initializeComments());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -46,6 +48,7 @@ const App = () => {
 	const error = useSelector(({ error }) => error);
 	const user = useSelector(({ activeUser }) => activeUser);
 	const allUsers = useSelector(({ users }) => users);
+	const allComments = useSelector(({ comments }) => comments);
 
 	const blogFormRef = React.createRef();
 	const newBlogForm = () => (
@@ -87,14 +90,14 @@ const App = () => {
 		});
 	};
 
-	const deleteBlog = async (blogObject) => {
-		if (window.confirm(`Remove ${blogObject.title} by ${blogObject.author}?`)) {
-			dispatch(removeBlog(blogObject, user.token)).catch((exception) => {
-				dispatch(setError('Removal unsuccessful', 3));
-				console.log(exception);
-			});
-		}
-	};
+	// const deleteBlog = async (blogObject) => {
+	// 	if (window.confirm(`Remove ${blogObject.title} by ${blogObject.author}?`)) {
+	// 		dispatch(removeBlog(blogObject, user.token)).catch((exception) => {
+	// 			dispatch(setError('Removal unsuccessful', 3));
+	// 			console.log(exception);
+	// 		});
+	// 	}
+	// };
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -180,7 +183,11 @@ const App = () => {
 							<User allUsers={allUsers} />
 						</Route>
 						<Route path="/blogs/:id">
-							<Blog allBlogs={allBlogs} addLike={addLike} />
+							<Blog
+								allBlogs={allBlogs}
+								addLike={addLike}
+								allComments={allComments}
+							/>
 						</Route>
 						<Route path="/users">
 							<h2>Users</h2>
