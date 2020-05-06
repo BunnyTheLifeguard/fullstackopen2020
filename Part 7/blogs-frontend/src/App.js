@@ -2,19 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-	initializeBlogs,
-	createBlog,
-	likeBlog,
-	removeBlog,
-} from './reducers/blogReducer';
+import { initializeBlogs, createBlog, likeBlog } from './reducers/blogReducer';
 import { setMessage } from './reducers/notificationReducer';
 import { setError } from './reducers/errorReducer';
 import { activeUser } from './reducers/userReducer';
 import { initializeUsers } from './reducers/userListReducer';
-import { initializeComments } from './reducers/commentReducer';
+import { initializeComments, createComment } from './reducers/commentReducer';
 
-// import Bloglist from './components/Bloglist';
 import { Notification, Error } from './components/Notification';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
@@ -87,6 +81,13 @@ const App = () => {
 		dispatch(likeBlog(blogObject)).catch((exception) => {
 			console.log(exception);
 			dispatch(setError('Like unsuccessful', 3));
+		});
+	};
+
+	const addComment = (commentObject) => {
+		dispatch(createComment(commentObject)).catch((exception) => {
+			console.log(exception);
+			dispatch(setError('Adding comment unsuccessful.', 3));
 		});
 	};
 
@@ -187,6 +188,7 @@ const App = () => {
 								allBlogs={allBlogs}
 								addLike={addLike}
 								allComments={allComments}
+								createComment={addComment}
 							/>
 						</Route>
 						<Route path="/users">

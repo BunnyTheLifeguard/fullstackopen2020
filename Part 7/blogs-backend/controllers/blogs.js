@@ -45,10 +45,8 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.post('/:id/comments', async (request, response) => {
 	const { body } = request;
+	console.log(body);
 	const blog = await Blog.findById(request.params.id);
-	// const { id } = blog._id;
-	// console.log(blog);
-	// const id = JSON.stringify(blog._id);
 	const comment = new Comment({ comment: body.comment, blogId: blog._id });
 	const savedComment = await comment.save();
 	response.json(savedComment.toJSON());
