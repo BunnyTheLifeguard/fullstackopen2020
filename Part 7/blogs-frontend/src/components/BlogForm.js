@@ -24,22 +24,56 @@ const BlogForm = ({ createBlog }) => {
 
 	return (
 		<div>
-			<h2>Create new</h2>
+			<h2
+				className="title is-4"
+				style={{ marginTop: '20px', marginLeft: '10px' }}
+			>
+				Create new
+			</h2>
 
 			<form onSubmit={addBlog}>
 				<div>
-					Title
-					<input id="title" value={title} onChange={handleTitleChange} />
+					<label className="label" style={{ margin: '0 10px' }}>
+						Title
+					</label>
+					<input
+						id="title"
+						value={title}
+						onChange={handleTitleChange}
+						className="input"
+						style={{ width: '20%', margin: '5px 10px' }}
+					/>
 				</div>
 				<div>
-					Author
-					<input id="author" value={author} onChange={handleAuthorChange} />
+					<label className="label" style={{ margin: '0 10px' }}>
+						Author
+					</label>
+					<input
+						id="author"
+						value={author}
+						onChange={handleAuthorChange}
+						className="input"
+						style={{ width: '20%', margin: '5px 10px' }}
+					/>
 				</div>
 				<div>
-					Url
-					<input id="url" value={url} onChange={handleUrlChange} />
+					<label className="label" style={{ margin: '0 10px' }}>
+						Url
+					</label>
+					<input
+						id="url"
+						value={url}
+						onChange={handleUrlChange}
+						className="input"
+						style={{ width: '20%', margin: '5px 10px' }}
+					/>
 				</div>
-				<button id="saveBlog" type="submit">
+				<button
+					id="saveBlog"
+					type="submit"
+					className="button is-link is-small"
+					style={{ margin: '5px 10px' }}
+				>
 					Add Blog
 				</button>
 			</form>

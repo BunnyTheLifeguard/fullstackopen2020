@@ -51,14 +51,6 @@ const App = () => {
 		</Togglable>
 	);
 
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
-	};
-
 	const addBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
 		dispatch(createBlog(blogObject, user.token))
@@ -133,26 +125,39 @@ const App = () => {
 	const loginForm = () => (
 		<form onSubmit={handleLogin}>
 			<div>
-				Username
+				<label className="label" style={{ margin: '10px 10px' }}>
+					Username
+				</label>
 				<input
 					id="username"
 					type="text"
 					value={username}
 					name="Username"
 					onChange={({ target }) => setUsername(target.value)}
+					className="input"
+					style={{ width: '20%', margin: '5px 10px' }}
 				/>
 			</div>
 			<div>
-				Password
+				<label className="label" style={{ margin: '10px 10px' }}>
+					Password
+				</label>
 				<input
 					id="password"
 					type="password"
 					value={password}
 					name="Password"
 					onChange={({ target }) => setPassword(target.value)}
+					className="input"
+					style={{ width: '20%', margin: '5px 10px' }}
 				/>
 			</div>
-			<button id="loginButton" type="submit">
+			<button
+				id="loginButton"
+				type="submit"
+				className="button is-success"
+				style={{ margin: '20px 10px' }}
+			>
 				Login
 			</button>
 		</form>
@@ -162,21 +167,51 @@ const App = () => {
 		<Router>
 			{user === null ? (
 				<div>
-					<h2>Log in to application</h2>
+					<h2 className="title is-3 is-spaced" style={{ margin: '25px 10px' }}>
+						Log in to application
+					</h2>
 					<Notification message={notification} />
 					<Error error={error} />
 					{loginForm()}
 				</div>
 			) : (
 				<div>
-					<h2>Blogs</h2>
+					<nav className="navbar">
+						<h2
+							className="title is-3 navbar-brand"
+							style={{ margin: '0', padding: '.5rem .75rem' }}
+						>
+							Blogs
+						</h2>
+						<Link to="/blogs" className="navbar-item">
+							Blogs
+						</Link>
+						<Link to="/users" className="navbar-item">
+							Users
+						</Link>
+					</nav>
 					<Notification message={notification} />
 					<Error error={error} />
-					<Link to="/blogs">blogs </Link>
-					<Link to="/users">users </Link>
 					<form onSubmit={handleLogout}>
-						<p>{user.name} logged in</p>
-						<button type="submit">Logout</button>
+						<article className="message" style={{ marginLeft: '10px' }}>
+							<div
+								className="message-body"
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									padding: '10px',
+								}}
+							>
+								{user.name} logged in {'	'}
+								<button
+									type="submit"
+									className="button is-danger is-small"
+									style={{ marginLeft: '15px' }}
+								>
+									Logout
+								</button>
+							</div>
+						</article>
 					</form>
 
 					<Switch>
@@ -192,21 +227,24 @@ const App = () => {
 							/>
 						</Route>
 						<Route path="/users">
-							<h2>Users</h2>
-							<table>
+							<h2
+								className="title is-4"
+								style={{ marginTop: '20px', marginLeft: '10px' }}
+							>
+								Users
+							</h2>
+							<table className="table">
 								<tbody>
 									<tr>
-										<td>&nbsp;</td>
-										<td>
-											<strong>blogs created</strong>
-										</td>
+										<th>&nbsp;</th>
+										<th>Blogs created</th>
 									</tr>
 									{allUsers.map((user) => (
 										<tr key={user.id} className="user">
 											<td>
 												<Link to={`/users/${user.id}`}>{user.name}</Link>
 											</td>
-											<td>{user.blogs.length}</td>
+											<td className="has-text-centered">{user.blogs.length}</td>
 										</tr>
 									))}
 								</tbody>
@@ -215,18 +253,22 @@ const App = () => {
 						<Route path="/">
 							{newBlogForm()}
 
-							<ul
-								className="blogList"
-								style={{ listStyleType: 'none', paddingLeft: 0 }}
-							>
-								{allBlogs.map((blog) => (
-									<li key={blog.id} style={blogStyle}>
-										<Link to={`/blogs/${blog.id}`}>
-											{blog.title} {blog.author}
-										</Link>
-									</li>
-								))}
-							</ul>
+							<table className="table">
+								<tbody>
+									<tr>
+										<th>Blog</th>
+										<th>Author</th>
+									</tr>
+									{allBlogs.map((blog) => (
+										<tr key={blog.id}>
+											<td>
+												<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+											</td>
+											<td>{blog.author}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
 						</Route>
 					</Switch>
 				</div>
