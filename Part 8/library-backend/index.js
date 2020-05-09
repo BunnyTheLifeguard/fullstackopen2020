@@ -120,10 +120,12 @@ const resolvers = {
 				return books.filter((b) => b.author === args.author);
 			} else if (args.genre !== undefined) {
 				return books.filter((b) => b.genres.includes(args.genre));
-			} else {
+			} else if (args.author !== undefined && args.genre !== undefined) {
 				return books.filter(
 					(b) => b.author === args.author && b.genres.includes(args.genre)
 				);
+			} else {
+				return books;
 			}
 		},
 		allAuthors: () => authors,
