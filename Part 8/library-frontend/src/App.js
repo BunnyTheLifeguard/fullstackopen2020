@@ -1,34 +1,43 @@
+import React, { useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
+import Authors from './components/Authors';
+import Books from './components/Books';
+import NewBook from './components/NewBook';
 
-import React, { useState } from 'react'
-import Authors from './components/Authors'
-import Books from './components/Books'
-import NewBook from './components/NewBook'
+const ALL_AUTHORS = gql`
+	query {
+		allAuthors {
+			name
+			born
+			bookCount
+		}
+	}
+`;
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+	const [page, setPage] = useState('authors');
 
-  return (
-    <div>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-      </div>
+	const authors = useQuery(ALL_AUTHORS);
 
-      <Authors
-        show={page === 'authors'}
-      />
+	if (authors.loading) {
+		return <div>Loading...</div>;
+	}
 
-      <Books
-        show={page === 'books'}
-      />
+	return (
+		<div>
+			<div>
+				<button onClick={() => setPage('authors')}>authors</button>
+				<button onClick={() => setPage('books')}>books</button>
+				<button onClick={() => setPage('add')}>add book</button>
+			</div>
 
-      <NewBook
-        show={page === 'add'}
-      />
+			<Authors show={page === 'authors'} authors={authors} />
 
-    </div>
-  )
-}
+			<Books show={page === 'books'} />
 
-export default App
+			<NewBook show={page === 'add'} />
+		</div>
+	);
+};
+
+export default App;
