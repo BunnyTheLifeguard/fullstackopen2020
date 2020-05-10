@@ -84,7 +84,7 @@ const typeDefs = gql`
 		title: String!
 		author: String!
 		published: Int!
-		genres: [String]!
+		genres: [String]
 	}
 
 	type Author {
@@ -105,7 +105,7 @@ const typeDefs = gql`
 			title: String!
 			author: String!
 			published: Int!
-			genres: [String]!
+			genres: [String]
 		): Book
 		editAuthor(name: String!, setBornTo: Int!): Author
 	}
@@ -135,6 +135,9 @@ const resolvers = {
 		addBook: (root, args) => {
 			const book = { ...args, id: uuidv4() };
 			books = books.concat(book);
+			authors.some((a) => a.name === args.author)
+				? authors
+				: (authors = authors.concat({ name: args.author, id: uuidv4() }));
 			return book;
 		},
 		editAuthor: (root, args) => {
