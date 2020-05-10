@@ -3,8 +3,8 @@ import { EDIT_AUTHOR, ALL_AUTHORS } from './queries';
 import { useMutation } from '@apollo/client';
 
 const Authors = ({ show, authors, setError }) => {
-	const [name, setName] = useState('');
-	const [setBornTo, setsetBornTo] = useState('');
+	const [name, setName] = useState(authors[0].name);
+	const [setBornTo, setSetBornTo] = useState('');
 
 	const [editAuthor] = useMutation(EDIT_AUTHOR, {
 		refetchQueries: [{ query: ALL_AUTHORS }],
@@ -18,14 +18,16 @@ const Authors = ({ show, authors, setError }) => {
 		return null;
 	}
 
+	const selectAuthor = (event) => {
+		setName(event.target.value);
+	};
+
 	const submit = async (event) => {
 		event.preventDefault();
-		console.log(setBornTo);
-		console.log(Number.isInteger(setBornTo));
 		editAuthor({ variables: { name, setBornTo } });
 
 		setName('');
-		setsetBornTo('');
+		setSetBornTo('');
 	};
 
 	return (
@@ -49,19 +51,19 @@ const Authors = ({ show, authors, setError }) => {
 			</table>
 			<h3>Set birthyear</h3>
 			<form onSubmit={submit}>
-				<div>
-					name
-					<input
-						value={name}
-						onChange={({ target }) => setName(target.value)}
-					/>
-				</div>
+				<select onChange={selectAuthor}>
+					{authors.map((a) => (
+						<option key={a.name} value={a.name}>
+							{a.name}
+						</option>
+					))}
+				</select>
 				<div>
 					born
 					<input
 						type="number"
 						value={setBornTo}
-						onChange={({ target }) => setsetBornTo(parseInt(target.value))}
+						onChange={({ target }) => setSetBornTo(parseInt(target.value))}
 					/>
 				</div>
 				<button type="submit">update author</button>
