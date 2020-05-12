@@ -1,4 +1,9 @@
-const { ApolloServer, UserInputError, gql } = require('apollo-server');
+const {
+	ApolloServer,
+	UserInputError,
+	gql,
+	ValidationError,
+} = require('apollo-server');
 const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 const config = require('./utils/config');
@@ -17,84 +22,6 @@ mongoose
 	})
 	.then(() => console.log('Connected to MongoDB'))
 	.catch((error) => console.log('Error connecting to MongoDB:', error.message));
-
-// let authors = [
-// 	{
-// 		name: 'Robert Martin',
-// 		id: 'afa51ab0-344d-11e9-a414-719c6709cf3e',
-// 		born: 1952,
-// 	},
-// 	{
-// 		name: 'Martin Fowler',
-// 		id: 'afa5b6f0-344d-11e9-a414-719c6709cf3e',
-// 		born: 1963,
-// 	},
-// 	{
-// 		name: 'Fyodor Dostoevsky',
-// 		id: 'afa5b6f1-344d-11e9-a414-719c6709cf3e',
-// 		born: 1821,
-// 	},
-// 	{
-// 		name: 'Joshua Kerievsky', // birthyear not known
-// 		id: 'afa5b6f2-344d-11e9-a414-719c6709cf3e',
-// 	},
-// 	{
-// 		name: 'Sandi Metz', // birthyear not known
-// 		id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
-// 	},
-// ];
-
-// let books = [
-// 	{
-// 		title: 'Clean Code',
-// 		published: 2008,
-// 		author: 'Robert Martin',
-// 		id: 'afa5b6f4-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['refactoring'],
-// 	},
-// 	{
-// 		title: 'Agile software development',
-// 		published: 2002,
-// 		author: 'Robert Martin',
-// 		id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['agile', 'patterns', 'design'],
-// 	},
-// 	{
-// 		title: 'Refactoring, edition 2',
-// 		published: 2018,
-// 		author: 'Martin Fowler',
-// 		id: 'afa5de00-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['refactoring'],
-// 	},
-// 	{
-// 		title: 'Refactoring to patterns',
-// 		published: 2008,
-// 		author: 'Joshua Kerievsky',
-// 		id: 'afa5de01-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['refactoring', 'patterns'],
-// 	},
-// 	{
-// 		title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
-// 		published: 2012,
-// 		author: 'Sandi Metz',
-// 		id: 'afa5de02-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['refactoring', 'design'],
-// 	},
-// 	{
-// 		title: 'Crime and punishment',
-// 		published: 1866,
-// 		author: 'Fyodor Dostoevsky',
-// 		id: 'afa5de03-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['classic', 'crime'],
-// 	},
-// 	{
-// 		title: 'The Demon ',
-// 		published: 1872,
-// 		author: 'Fyodor Dostoevsky',
-// 		id: 'afa5de04-344d-11e9-a414-719c6709cf3e',
-// 		genres: ['classic', 'revolution'],
-// 	},
-// ];
 
 const typeDefs = gql`
 	type Book {
@@ -133,37 +60,15 @@ const typeDefs = gql`
 
 const resolvers = {
 	Query: {
-		// specificAuthor: async (root, args) => {
-		// 	const author = await Author.findOne({ name: args.name });
-		// 	return author;
-		// },
-		// bookCount: async (root, args) => {
-		// 	console.log(args);
-		// 	// const books = await Book.find({});
-		// 	// return books.length;
-		// },
 		authorCount: async () => {
 			const authors = await Author.find({});
 			return authors.length;
 		},
-		allBooks: async (root, args) => {
+		allBooks: async () => {
 			const books = await Book.find({});
 			return books;
 		},
-		// {
-		// 	if (args.author !== undefined) {
-		// 		return books.filter((b) => b.author === args.author);
-		// 	} else if (args.genre !== undefined) {
-		// 		return books.filter((b) => b.genres.includes(args.genre));
-		// 	} else if (args.author !== undefined && args.genre !== undefined) {
-		// 		return books.filter(
-		// 			(b) => b.author === args.author && b.genres.includes(args.genre)
-		// 		);
-		// 	} else {
-		// 		return books;
-		// 	}
-		// }
-		allAuthors: async (root, args) => {
+		allAuthors: async () => {
 			const authors = await Author.find({});
 			return authors;
 		},
@@ -171,27 +76,33 @@ const resolvers = {
 
 	Mutation: {
 		addBook: async (root, args) => {
-			const authors = await Author.find({});
-
-			if (authors.some((a) => a.name !== args.author) || authors.length === 0) {
-				const author = new Author({ name: args.author, id: uuidv4() });
-				await author.save();
-			}
-
-			const name = await Author.findOne({ name: args.author });
-
-			const book = new Book({
-				...args,
-				id: uuidv4(),
-				author: name,
-			});
-
 			try {
+				const authors = await Author.find({});
+
+				if (
+					authors.length === 0 ||
+					(await Author.findOne({ name: args.author })) === null
+				) {
+					var author = new Author({ name: args.author, id: uuidv4() });
+				}
+
+				const name = await Author.findOne({ name: args.author });
+
+				const book = new Book({
+					...args,
+					id: uuidv4(),
+					author: name,
+				});
+				if (author && book.title.length >= 2) {
+					await author.save();
+				}
 				await book.save();
 			} catch (error) {
+				if (error.name === 'ValidationError') {
+					throw new ValidationError(error.message);
+				}
 				throw new UserInputError(error.message, { invalidArgs: args });
 			}
-			return book;
 		},
 		editAuthor: async (root, args) => {
 			try {
@@ -209,27 +120,27 @@ const resolvers = {
 
 	Author: {
 		name: async (root) => {
-			const author = await Author.findById(root);
-			return author.name;
+			return root.name;
 		},
 		born: async (root) => {
-			const author = await Author.findById(root);
-			return author.born;
+			return root.born;
 		},
 		bookCount: async (root) => {
-			const books = await Book.find({});
+			const books = await Book.find({ author: root._id });
 			return books.filter((b) => b.author.toString() === root._id.toString())
 				.length;
 		},
 		id: async (root) => {
-			const author = await Author.findById(root);
-			return author._id;
+			return root._id;
 		},
 	},
 
 	Book: {
 		title: (root) => root.title,
-		author: (root) => root.author,
+		author: async (root) => {
+			const author = await Author.findById(root.author);
+			return author;
+		},
 	},
 };
 
