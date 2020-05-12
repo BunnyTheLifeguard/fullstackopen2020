@@ -120,7 +120,7 @@ const resolvers = {
 					id: uuidv4(),
 					author: name,
 				});
-				if (author && book.title.length >= 2) {
+				if (author) {
 					await author.save();
 				}
 				await book.save();

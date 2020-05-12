@@ -44,13 +44,15 @@ const App = () => {
 				<Notify errorMessage={errorMessage} />
 				<button onClick={() => setPage('authors')}>authors</button>
 				<button onClick={() => setPage('books')}>books</button>
-				<button onClick={() => setPage('add')}>add book</button>
 				{token === null ? (
 					<button onClick={() => setPage('login')}>login</button>
 				) : (
-					<button type="submit" onClick={logout}>
-						logout
-					</button>
+					<>
+						<button onClick={() => setPage('add')}>add book</button>
+						<button type="submit" onClick={logout}>
+							logout
+						</button>
+					</>
 				)}
 			</div>
 
