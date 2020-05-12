@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Books = ({ show, books }) => {
+	const [filter, setFilter] = useState('all');
 	if (!show) {
 		return null;
 	}
+
+	const allGenres = books.map((b) => b.genres);
+	const genres = [...new Set(allGenres.flat())];
 
 	return (
 		<div>
@@ -16,15 +20,36 @@ const Books = ({ show, books }) => {
 						<th>author</th>
 						<th>published</th>
 					</tr>
-					{books.map((a) => (
-						<tr key={a.title}>
-							<td>{a.title}</td>
-							<td>{a.author.name}</td>
-							<td>{a.published}</td>
-						</tr>
-					))}
+					{filter === 'all'
+						? books.map((a) => (
+								<tr key={a.title}>
+									<td>{a.title}</td>
+									<td>{a.author.name}</td>
+									<td>{a.published}</td>
+								</tr>
+						  ))
+						: books
+								.filter((b) => b.genres.includes(filter))
+								.map((a) => (
+									<tr key={a.title}>
+										<td>{a.title}</td>
+										<td>{a.author.name}</td>
+										<td>{a.published}</td>
+									</tr>
+								))}
 				</tbody>
 			</table>
+			<div>
+				{genres.map((g) => (
+					<button
+						key={g}
+						value={g}
+						onClick={({ target }) => setFilter(target.value)}
+					>
+						{g}
+					</button>
+				))}
+			</div>
 		</div>
 	);
 };
