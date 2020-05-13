@@ -4,6 +4,7 @@ import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
+import Recommended from './components/Recommended';
 import { ALL_AUTHORS, ALL_BOOKS } from './components/queries';
 
 const Notify = ({ errorMessage }) => {
@@ -49,6 +50,7 @@ const App = () => {
 				) : (
 					<>
 						<button onClick={() => setPage('add')}>add book</button>
+						<button onClick={() => setPage('favs')}>recommended</button>
 						<button type="submit" onClick={logout}>
 							logout
 						</button>
@@ -65,6 +67,11 @@ const App = () => {
 			<Books show={page === 'books'} books={books.data.allBooks} />
 
 			<NewBook show={page === 'add'} setError={notify} />
+			<Recommended
+				show={page === 'favs'}
+				books={books.data.allBooks}
+				setError={notify}
+			/>
 			<LoginForm
 				show={page === 'login'}
 				setError={notify}

@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { USER } from './queries';
+import React, { useState } from 'react';
 
 const Books = ({ show, books }) => {
 	const [filter, setFilter] = useState('all');
-
-	const user = useQuery(USER);
-
-	useEffect(() => {
-		if (user.data !== undefined && user.data.me !== null) {
-			setFilter(user.data.me.favoriteGenre);
-		}
-	}, [user.data]);
 
 	if (!show) {
 		return null;
@@ -31,23 +21,14 @@ const Books = ({ show, books }) => {
 						<th>author</th>
 						<th>published</th>
 					</tr>
-					{filter === 'all'
-						? books.map((a) => (
-								<tr key={a.title}>
-									<td>{a.title}</td>
-									<td>{a.author.name}</td>
-									<td>{a.published}</td>
-								</tr>
-						  ))
-						: books
-								.filter((b) => b.genres.includes(filter))
-								.map((a) => (
-									<tr key={a.title}>
-										<td>{a.title}</td>
-										<td>{a.author.name}</td>
-										<td>{a.published}</td>
-									</tr>
-								))}
+					{filter === 'all' &&
+						books.map((a) => (
+							<tr key={a.title}>
+								<td>{a.title}</td>
+								<td>{a.author.name}</td>
+								<td>{a.published}</td>
+							</tr>
+						))}
 				</tbody>
 			</table>
 			<div>

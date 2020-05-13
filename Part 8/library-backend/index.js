@@ -82,9 +82,17 @@ const resolvers = {
 			const authors = await Author.find({});
 			return authors.length;
 		},
-		allBooks: async () => {
-			const books = await Book.find({});
-			return books;
+		allBooks: async (root, args) => {
+			try {
+				if (args.genre) {
+					const filtered = await Book.find({ genres: [args.genre] });
+					return filtered;
+				}
+				const books = await Book.find({});
+				return books;
+			} catch (error) {
+				throw new UserInputError(error.message, { invalidArgs: args });
+			}
 		},
 		allAuthors: async () => {
 			const authors = await Author.find({});
