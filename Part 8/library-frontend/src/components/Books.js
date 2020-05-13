@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import { USER } from './queries';
 
 const Books = ({ show, books }) => {
 	const [filter, setFilter] = useState('all');
+
+	const user = useQuery(USER);
+
+	useEffect(() => {
+		if (user.data !== undefined && user.data.me !== null) {
+			setFilter(user.data.me.favoriteGenre);
+		}
+	}, [user.data]);
+
 	if (!show) {
 		return null;
 	}
@@ -49,6 +60,13 @@ const Books = ({ show, books }) => {
 						{g}
 					</button>
 				))}
+				<button
+					key="all"
+					value="all"
+					onClick={({ target }) => setFilter(target.value)}
+				>
+					All
+				</button>
 			</div>
 		</div>
 	);

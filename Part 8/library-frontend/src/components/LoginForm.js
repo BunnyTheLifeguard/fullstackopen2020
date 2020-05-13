@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useApolloClient } from '@apollo/client';
 import { LOGIN } from './queries';
 
 const LoginForm = ({ show, setError, setToken }) => {
@@ -10,11 +10,14 @@ const LoginForm = ({ show, setError, setToken }) => {
 		onError: (error) => setError(error.graphQLErrors[0].message),
 	});
 
+	const client = useApolloClient();
+
 	useEffect(() => {
 		if (result.data) {
 			const token = result.data.login.value;
 			setToken(token);
 			localStorage.setItem('active-user', token);
+			client.resetStore();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [result.data]);
