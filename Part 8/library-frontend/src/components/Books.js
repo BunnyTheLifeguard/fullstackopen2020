@@ -21,14 +21,23 @@ const Books = ({ show, books }) => {
 						<th>author</th>
 						<th>published</th>
 					</tr>
-					{filter === 'all' &&
-						books.map((a) => (
-							<tr key={a.title}>
-								<td>{a.title}</td>
-								<td>{a.author.name}</td>
-								<td>{a.published}</td>
-							</tr>
-						))}
+					{filter === 'all'
+						? books.map((a) => (
+								<tr key={a.title}>
+									<td>{a.title}</td>
+									<td>{a.author.name}</td>
+									<td>{a.published}</td>
+								</tr>
+						  ))
+						: books
+								.filter((b) => b.genres.includes(filter))
+								.map((a) => (
+									<tr key={a.title}>
+										<td>{a.title}</td>
+										<td>{a.author.name}</td>
+										<td>{a.published}</td>
+									</tr>
+								))}
 				</tbody>
 			</table>
 			<div>
