@@ -24,11 +24,24 @@ const App = () => {
 
 	const client = useApolloClient();
 
+	const updateCacheWith = (addedBook) => {
+		const includedIn = (set, object) =>
+			set.map((p) => p.id).includes(object.id);
+
+		const booksInStore = client.readQuery({ query: ALL_BOOKS });
+		if (!includedIn(booksInStore.allBooks, addedBook)) {
+			client.writeQuery({
+				query: ALL_BOOKS,
+				data: { allBooks: booksInStore.allBooks.concat(addedBook) },
+			});
+		}
+	};
+
 	useSubscription(BOOK_ADDED, {
 		onSubscriptionData: ({ subscriptionData }) => {
-			window.alert(
-				`${subscriptionData.data.bookAdded.title} by ${subscriptionData.data.bookAdded.author.name} added.`
-			);
+			const addedBook = subscriptionData.data.bookAdded;
+			window.alert(`${addedBook.title} by ${addedBook.author.name} added.`);
+			updateCacheWith(addedBook);
 		},
 	});
 
