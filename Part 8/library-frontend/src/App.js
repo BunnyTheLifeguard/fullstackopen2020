@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useQuery, useApolloClient } from '@apollo/client';
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
 import Recommended from './components/Recommended';
-import { ALL_AUTHORS, ALL_BOOKS } from './components/queries';
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './components/queries';
 
 const Notify = ({ errorMessage }) => {
 	if (!errorMessage) {
@@ -23,6 +23,14 @@ const App = () => {
 	const books = useQuery(ALL_BOOKS);
 
 	const client = useApolloClient();
+
+	useSubscription(BOOK_ADDED, {
+		onSubscriptionData: ({ subscriptionData }) => {
+			window.alert(
+				`${subscriptionData.data.bookAdded.title} by ${subscriptionData.data.bookAdded.author.name} added.`
+			);
+		},
+	});
 
 	const logout = () => {
 		setToken(null);
