@@ -84,6 +84,9 @@ export const GENRE = gql`
 			title
 			author {
 				name
+				born
+				bookCount
+				id
 			}
 			published
 			genres

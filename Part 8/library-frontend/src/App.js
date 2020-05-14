@@ -71,6 +71,7 @@ const App = () => {
 				show={page === 'favs'}
 				books={books.data.allBooks}
 				setError={notify}
+				token={token}
 			/>
 			<LoginForm
 				show={page === 'login'}
