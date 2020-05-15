@@ -19,15 +19,13 @@ const parseArgs = (args: Array<string>): TrainingValues => {
 	const nums: number[] = args.map(Number);
 	nums.splice(0, 3);
 
-	for (const value in nums) {
-		if (!isNaN(Number(value))) {
-			return {
-				target: Number(args[2]),
-				days: nums,
-			};
-		} else {
-			throw new Error('Provided values were not numbers!');
-		}
+	if (!nums.some(isNaN)) {
+		return {
+			target: Number(args[2]),
+			days: nums,
+		};
+	} else {
+		throw new Error('Provided values were not numbers!');
 	}
 };
 
