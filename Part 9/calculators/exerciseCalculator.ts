@@ -1,3 +1,8 @@
+interface TrainingValues {
+	target: number;
+	days: number[];
+}
+
 interface Result {
 	periodLength: number;
 	trainingDays: number;
@@ -7,6 +12,24 @@ interface Result {
 	target: number;
 	average: number;
 }
+
+const parseArgs = (args: Array<string>): TrainingValues => {
+	if (args.length < 2) throw new Error('Not enough arguments');
+
+	const nums: number[] = args.map(Number);
+	nums.splice(0, 3);
+
+	for (const value in nums) {
+		if (!isNaN(Number(value))) {
+			return {
+				target: Number(args[2]),
+				days: nums,
+			};
+		} else {
+			throw new Error('Provided values were not numbers!');
+		}
+	}
+};
 
 const calculateAverage = (real: number[], target: number): Result => {
 	const sum = real.reduce((a, b) => a + b, 0);
@@ -38,4 +61,9 @@ const calculateAverage = (real: number[], target: number): Result => {
 	return Result;
 };
 
-console.log(calculateAverage([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+	const { target, days } = parseArgs(process.argv);
+	console.log(calculateAverage(days, target));
+} catch (e) {
+	console.log('Error:', e.message);
+}
