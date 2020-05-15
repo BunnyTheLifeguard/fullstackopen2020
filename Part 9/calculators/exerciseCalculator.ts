@@ -59,9 +59,13 @@ const calculateAverage = (real: number[], target: number): Result => {
 	return Result;
 };
 
-try {
-	const { target, days } = parseArgs(process.argv);
-	console.log(calculateAverage(days, target));
-} catch (e) {
-	console.log('Error:', e.message);
+if (require.main === module) {
+	try {
+		const { target, days } = parseArgs(process.argv);
+		console.log(calculateAverage(days, target));
+	} catch (e) {
+		console.log('Error:', e.message);
+	}
 }
+
+export default calculateAverage;
