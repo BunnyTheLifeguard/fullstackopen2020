@@ -1,6 +1,7 @@
 import patients from '../data/patients';
+import { v4 as uuidv4 } from 'uuid';
 
-import { withoutSsn } from '../types';
+import { withoutSsn, PatientEntry, newPatientEntry } from '../types';
 
 const getEntries = (): withoutSsn[] => {
 	return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
@@ -12,8 +13,14 @@ const getEntries = (): withoutSsn[] => {
 	}));
 };
 
-const addEntry = () => {
-	return null;
+const addEntry = (entry: newPatientEntry): PatientEntry => {
+	const newPatient = {
+		id: uuidv4(),
+		...entry,
+	};
+
+	patients.push(newPatient);
+	return newPatient;
 };
 
 export default {
