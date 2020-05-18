@@ -19,4 +19,20 @@ router.post('/', (req, res) => {
 	}
 });
 
+// router.get('/:id', (req, res) => {
+// 	const patients = patientService.getAll();
+// 	const patient: Patient = patients.find((p) => p.id === req.params.id);
+// 	res.json(patient);
+// });
+
+router.get('/:id', (req, res) => {
+	const patient = patientService.findById(req.params.id);
+
+	if (patient) {
+		res.send(patient);
+	} else {
+		res.sendStatus(404);
+	}
+});
+
 export default router;
