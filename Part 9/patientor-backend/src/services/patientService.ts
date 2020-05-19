@@ -1,15 +1,23 @@
 import patients from "../data/patients";
 import { v4 as uuidv4 } from "uuid";
 
-import { withoutSsn, PatientEntry, newPatientEntry, Patient } from "../types";
+import {
+  PatientEntry,
+  newPatientEntry,
+  Patient,
+  PublicPatient,
+} from "../types";
 
-const getEntries = (): withoutSsn[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+const getEntries = (): PublicPatient[] => {
+  return patients.map((
+    { id, name, dateOfBirth, gender, occupation, entries },
+  ) => ({
     id,
     name,
     dateOfBirth,
     gender,
     occupation,
+    entries,
   }));
 };
 

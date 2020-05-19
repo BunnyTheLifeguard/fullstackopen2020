@@ -28,6 +28,7 @@ const PatientDetails: React.FC = () => {
   }, [id]);
 
   if (patient) {
+    console.log(patient.entries);
     return (
       <div>
         <h2>
@@ -41,6 +42,19 @@ const PatientDetails: React.FC = () => {
           <br />
           occupation: {patient.occupation}
         </p>
+        <h3>entries</h3>
+        {patient.entries.length > 0 &&
+          <div>
+            {patient.entries.map((e) => (
+              <div key={e.id}>
+                <p key={e.id}>{e.date}{" "}{e.description}</p>
+                <ul>
+                  {e.diagnosisCodes !== undefined &&
+                    e.diagnosisCodes.map((c: string) => <li key={c}>{c}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>}
       </div>
     );
   } else {
