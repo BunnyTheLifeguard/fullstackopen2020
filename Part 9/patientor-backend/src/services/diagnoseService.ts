@@ -1,16 +1,16 @@
-import diagnoses from '../data/diagnoses';
+import diagnosis from "../data/diagnosis";
 
-import { DiagnoseEntry } from '../types';
+import { Diagnosis } from "../types";
 
-const getEntries = (): Array<DiagnoseEntry> => {
-	return diagnoses;
+const getEntries = (): Diagnosis[] => {
+  return diagnosis.map(({ code, name, latin }) => ({ code, name, latin }));
 };
 
 const addEntry = () => {
-	return null;
+  return null;
 };
 
 export default {
-	getEntries,
-	addEntry,
+  getEntries,
+  addEntry,
 };

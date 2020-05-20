@@ -3,7 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 import { apiBaseUrl } from "../constants";
 
 const PatientDetails: React.FC = () => {
@@ -11,6 +11,7 @@ const PatientDetails: React.FC = () => {
 
   const [error, setError] = React.useState<string | undefined>();
   const [patient, setPatient] = React.useState<Patient | undefined>();
+  const [diagnosis, setDiagnosis] = React.useState<Diagnosis[] | undefined>();
 
   React.useEffect(() => {
     const getPatientDetails = async () => {
@@ -25,10 +26,22 @@ const PatientDetails: React.FC = () => {
       }
     };
     getPatientDetails();
+
+    const getDiagnosisList = async () => {
+      try {
+        const diagnosisList = await axios.get<Diagnosis[]>(
+          `${apiBaseUrl}/diagnosis`,
+        );
+        setDiagnosis(diagnosisList.data);
+      } catch (e) {
+        console.error(e.response);
+        setError(e.response);
+      }
+    };
+    getDiagnosisList();
   }, [id]);
 
-  if (patient) {
-    console.log(patient.entries);
+  if (patient && diagnosis) {
     return (
       <div>
         <h2>
@@ -50,7 +63,14 @@ const PatientDetails: React.FC = () => {
                 <p key={e.id}>{e.date}{" "}{e.description}</p>
                 <ul>
                   {e.diagnosisCodes !== undefined &&
-                    e.diagnosisCodes.map((c: string) => <li key={c}>{c}</li>)}
+                    e.diagnosisCodes.map((c: string) =>
+                      <li key={c}>
+                        {c}
+                        {" "}
+                        {diagnosis !== undefined &&
+                          diagnosis.filter((d) => d.code === c)[0].name}
+                      </li>
+                    )}
                 </ul>
               </div>
             ))}

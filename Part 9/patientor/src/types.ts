@@ -61,3 +61,9 @@ export interface Patient {
   dateOfBirth?: string;
   entries: Entry[];
 }
+
+export interface Diagnosis {
+  code: string;
+  name: string;
+  latin?: string;
+}
