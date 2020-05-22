@@ -30,6 +30,10 @@ const isEntryType = (param: any): param is EntryType => {
 	return Object.values(EntryType).includes(param);
 };
 
+const isStringArray = (param: any): param is string[] => {
+	return typeof param[0] === 'string';
+};
+
 const parseName = (name: any): string => {
 	if (!name || !isString(name)) {
 		throw new Error('Incorrect or missing name: ' + name);
@@ -119,6 +123,13 @@ const parseDischarge = (discharge: any): Discharge => {
 	return discharge;
 };
 
+const parseDiagnosisCodes = (code: any): string[] => {
+	if (!isStringArray(code)) {
+		throw new Error('Incorrect diagnosis code(s): ' + code);
+	}
+	return code;
+};
+
 export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 	if (object.type === 'HealthCheck') {
 		const newHCEntry: Omit<HealthCheckEntry, 'id'> = {
@@ -127,6 +138,7 @@ export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 			specialist: parseSpecialist(object.specialist),
 			healthCheckRating: parseHCRating(object.healthCheckRating),
 			type: parseEntryType(object.type),
+			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
 		};
 		return newHCEntry;
 	} else if (object.type === 'OccupationalHealthcare') {

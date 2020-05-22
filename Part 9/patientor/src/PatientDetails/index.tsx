@@ -1,9 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Button } from 'semantic-ui-react';
 
-import { Patient, Diagnosis, Entry } from '../types';
+import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
+import AddEntryModal from '../AddEntryModal';
+import { useStateValue, addEntry } from '../state';
+
+import { Patient, Entry, HealthCheckEntry } from '../types';
 import { apiBaseUrl } from '../constants';
 import HoEntry from './HospitalEntry';
 import OccupationalHCEntry from './OccupationalHCEntry';
@@ -11,10 +15,19 @@ import HCEntry from './HealthCheckEntry';
 
 const PatientDetails: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
+	const [, dispatch] = useStateValue();
 
 	const [error, setError] = React.useState<string | undefined>();
 	const [patient, setPatient] = React.useState<Patient | undefined>();
-	const [diagnosis, setDiagnosis] = React.useState<Diagnosis[] | undefined>();
+	const [entries, setEntries] = React.useState<Entry[]>();
+
+	const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+
+	const openModal = (): void => setModalOpen(true);
+	const closeModal = (): void => {
+		setModalOpen(false);
+		setError(undefined);
+	};
 
 	React.useEffect(() => {
 		const getPatientDetails = async () => {
@@ -23,26 +36,32 @@ const PatientDetails: React.FC = () => {
 					`${apiBaseUrl}/patients/${id}`
 				);
 				setPatient(patientDetails.data);
+				setEntries(patientDetails.data.entries);
 			} catch (e) {
 				console.error(e.response.data);
 				setError(e.response.data);
 			}
 		};
 		getPatientDetails();
-
-		const getDiagnosisList = async () => {
-			try {
-				const diagnosisList = await axios.get<Diagnosis[]>(
-					`${apiBaseUrl}/diagnosis`
-				);
-				setDiagnosis(diagnosisList.data);
-			} catch (e) {
-				console.error(e.response);
-				setError(e.response);
-			}
-		};
-		getDiagnosisList();
 	}, [id]);
+
+	const submitNewEntry = async (values: EntryFormValues) => {
+		try {
+			const { data: newEntry } = await axios.post<HealthCheckEntry>(
+				`${apiBaseUrl}/patients/${id}/entries`,
+				values
+			);
+			dispatch(addEntry(newEntry));
+			if (entries) {
+				entries.push(newEntry);
+				setEntries(entries);
+			}
+			closeModal();
+		} catch (e) {
+			console.error(e.response.data);
+			setError(e.response.data.error);
+		}
+	};
 
 	const assertNever = (value: never): never => {
 		throw new Error(
@@ -63,7 +82,7 @@ const PatientDetails: React.FC = () => {
 		}
 	};
 
-	if (patient && diagnosis) {
+	if (patient) {
 		return (
 			<div>
 				<h2>
@@ -79,6 +98,13 @@ const PatientDetails: React.FC = () => {
 					<br />
 					occupation: {patient.occupation}
 				</p>
+				<AddEntryModal
+					modalOpen={modalOpen}
+					onSubmit={submitNewEntry}
+					error={error}
+					onClose={closeModal}
+				/>
+				<Button onClick={() => openModal()}>Add new entry</Button>
 				<h3>entries</h3>
 				{patient.entries.length > 0 && (
 					<div>
