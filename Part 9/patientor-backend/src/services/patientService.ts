@@ -36,16 +36,16 @@ const findById = (id: string) => {
 const addPatient = (entry: newPatientEntry): PatientEntry => {
 	if ('entries' in entry) {
 		const newPatient = {
+			...(entry as Omit<Patient, 'id'>),
 			id: uuidv4(),
-			...(entry as Patient),
 		};
 		patients.push(newPatient);
 		return newPatient;
 	} else {
 		const newPatient = {
+			...(entry as Omit<Patient, 'id' | 'entries'>),
 			id: uuidv4(),
 			entries: [],
-			...(entry as Patient),
 		};
 		patients.push(newPatient);
 		return newPatient;
@@ -57,8 +57,8 @@ const addEntry = (id: string, entry: Entry): Entry | undefined => {
 	if (patient && entry) {
 		const patientEntries: Entry[] = patient.entries;
 		const newEntry = {
-			id: uuidv4(),
 			...entry,
+			id: uuidv4(),
 		};
 		patientEntries.push(newEntry);
 		return newEntry;
