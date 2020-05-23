@@ -154,9 +154,9 @@ const PatientDetails: React.FC = () => {
 					)}
 				</h2>
 				<p>
-					ssn: {patient.ssn}
+					SSN: {patient.ssn}
 					<br />
-					occupation: {patient.occupation}
+					Occupation: {patient.occupation}
 				</p>
 				<AddEntryModal
 					modalOpen={modalHCOpen}
@@ -181,7 +181,7 @@ const PatientDetails: React.FC = () => {
 					onClose={closeHoModal}
 				/>
 				<Button onClick={() => openHoModal()}>New Hospital Entry</Button>
-				<h3>entries</h3>
+				<h3>Entries</h3>
 				{patient.entries.length > 0 && (
 					<div>
 						{patient.entries.map((entry) => EntryDetails({ entry: entry }))}

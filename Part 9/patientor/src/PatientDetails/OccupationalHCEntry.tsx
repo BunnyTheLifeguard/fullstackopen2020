@@ -15,6 +15,23 @@ const OccupationalHCEntry: React.FC<{ entry: OccupationalHealthcareEntry }> = ({
 				<p style={{ color: 'grey' }}>
 					<i>{entry.description}</i>
 				</p>
+				<div style={{ color: 'grey' }}>Specialist: {entry.specialist}</div>
+				{entry.diagnosisCodes && (
+					<div style={{ color: 'grey' }}>
+						Diagnoses:{' '}
+						<ul>
+							{entry.diagnosisCodes.map((code) => (
+								<li key={code}>{code}</li>
+							))}
+						</ul>
+					</div>
+				)}
+				<div style={{ color: 'grey' }}>Employer: {entry.employerName}</div>
+				{entry.sickLeave && (
+					<div style={{ color: 'grey' }}>
+						Sick leave: {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
+					</div>
+				)}
 			</Segment>
 		</div>
 	);

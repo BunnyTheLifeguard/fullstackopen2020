@@ -27,6 +27,17 @@ const HCEntry: React.FC<{ entry: HealthCheckEntry }> = ({ entry }) => {
 				<p style={{ color: 'grey' }}>
 					<i>{entry.description}</i>
 				</p>
+				<div style={{ color: 'grey' }}>Specialist: {entry.specialist}</div>
+				{entry.diagnosisCodes && (
+					<div style={{ color: 'grey' }}>
+						Diagnoses:{' '}
+						<ul>
+							{entry.diagnosisCodes.map((code) => (
+								<li key={code}>{code}</li>
+							))}
+						</ul>
+					</div>
+				)}
 				<Rating entry={entry} />
 			</Segment>
 		</div>
