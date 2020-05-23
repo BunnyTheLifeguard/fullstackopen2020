@@ -26,7 +26,6 @@ const OccupationalHCEntry: React.FC<{ entry: OccupationalHealthcareEntry }> = ({
 						</ul>
 					</div>
 				)}
-				<div style={{ color: 'grey' }}>Employer: {entry.employerName}</div>
 				{entry.sickLeave && (
 					<div style={{ color: 'grey' }}>
 						Sick leave: {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
