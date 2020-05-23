@@ -7,6 +7,8 @@ import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 import AddEntryModal from '../AddEntryModal';
 import { OccuFormValues } from '../AddOccuHCModal/AddOccuHCForm';
 import AddOccuHCModal from '../AddOccuHCModal';
+import { HospitalFormValues } from '../AddHospitalModal/AddHospitalForm';
+import AddHospitalModal from '../AddHospitalModal';
 import { useStateValue, addEntry } from '../state';
 
 import {
@@ -14,6 +16,7 @@ import {
 	Entry,
 	HealthCheckEntry,
 	OccupationalHealthcareEntry,
+	HospitalEntry,
 } from '../types';
 import { apiBaseUrl } from '../constants';
 import HoEntry from './HospitalEntry';
@@ -30,6 +33,7 @@ const PatientDetails: React.FC = () => {
 
 	const [modalHCOpen, setModalHCOpen] = React.useState<boolean>(false);
 	const [modalOHCOpen, setModalOHCOpen] = React.useState<boolean>(false);
+	const [modalHoOpen, setModalHoOpen] = React.useState<boolean>(false);
 
 	const openHCModal = (): void => setModalHCOpen(true);
 	const closeHCModal = (): void => {
@@ -40,6 +44,12 @@ const PatientDetails: React.FC = () => {
 	const openOHCModal = (): void => setModalOHCOpen(true);
 	const closeOHCModal = (): void => {
 		setModalOHCOpen(false);
+		setError(undefined);
+	};
+
+	const openHoModal = (): void => setModalHoOpen(true);
+	const closeHoModal = (): void => {
+		setModalHoOpen(false);
 		setError(undefined);
 	};
 
@@ -95,6 +105,24 @@ const PatientDetails: React.FC = () => {
 		}
 	};
 
+	const submitNewHospital = async (values: HospitalFormValues) => {
+		try {
+			const { data: newEntry } = await axios.post<HospitalEntry>(
+				`${apiBaseUrl}/patients/${id}/entries`,
+				values
+			);
+			dispatch(addEntry(newEntry));
+			if (entries) {
+				entries.push(newEntry);
+				setEntries(entries);
+			}
+			closeHoModal();
+		} catch (e) {
+			console.error(e.response.data);
+			setError(e.response.data.error);
+		}
+	};
+
 	const assertNever = (value: never): never => {
 		throw new Error(
 			`Unhandled discriminated union member: ${JSON.stringify(value)}`
@@ -136,9 +164,7 @@ const PatientDetails: React.FC = () => {
 					error={error}
 					onClose={closeHCModal}
 				/>
-				<Button onClick={() => openHCModal()}>
-					Add new Health Check Entry
-				</Button>
+				<Button onClick={() => openHCModal()}>New Health Check Entry</Button>
 				<AddOccuHCModal
 					modalOpen={modalOHCOpen}
 					onSubmit={submitNewOccu}
@@ -146,8 +172,15 @@ const PatientDetails: React.FC = () => {
 					onClose={closeOHCModal}
 				/>
 				<Button onClick={() => openOHCModal()}>
-					Add new OccupationalHealthcare Entry
+					New OccupationalHealthcare Entry
 				</Button>
+				<AddHospitalModal
+					modalOpen={modalHoOpen}
+					onSubmit={submitNewHospital}
+					error={error}
+					onClose={closeHoModal}
+				/>
+				<Button onClick={() => openHoModal()}>New Hospital Entry</Button>
 				<h3>entries</h3>
 				{patient.entries.length > 0 && (
 					<div>

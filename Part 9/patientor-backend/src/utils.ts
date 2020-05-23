@@ -118,7 +118,13 @@ const parseEntryType = (type: any): EntryType => {
 };
 
 const parseDischarge = (discharge: any): Discharge => {
-	if (!discharge || !discharge.date || !discharge.criteria) {
+	if (
+		!discharge ||
+		!discharge.date ||
+		!discharge.criteria ||
+		!isDate(discharge.date) ||
+		!isString(discharge.criteria)
+	) {
 		throw new Error('Incorrect or missing discharge data: ' + discharge);
 	}
 	return discharge;
@@ -154,8 +160,8 @@ export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 			description: parseDescription(object.description),
 			date: parseDate(object.date),
 			specialist: parseSpecialist(object.specialist),
-			type: parseEntryType(object.type),
 			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+			type: parseEntryType(object.type),
 			employerName: parseEmployer(object.employerName),
 			sickLeave: parseSickLeave(object.sickLeave),
 		};
@@ -165,8 +171,8 @@ export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 			description: parseDescription(object.description),
 			date: parseDate(object.date),
 			specialist: parseSpecialist(object.specialist),
-			type: parseEntryType(object.type),
 			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+			type: parseEntryType(object.type),
 			discharge: parseDischarge(object.discharge),
 		};
 		return newHEntry;
