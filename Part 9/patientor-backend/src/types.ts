@@ -14,10 +14,12 @@ export interface HealthCheckEntry extends BaseEntry {
 export interface OccupationalHealthcareEntry extends BaseEntry {
 	type: EntryType;
 	employerName: string;
-	sickLeave?: {
-		startDate: string;
-		endDate: string;
-	};
+	sickLeave?: SickLeave;
+}
+
+export interface SickLeave {
+	startDate: string;
+	endDate: string;
 }
 
 export interface HospitalEntry extends BaseEntry {

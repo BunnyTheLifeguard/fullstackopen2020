@@ -2,22 +2,18 @@ import React from 'react';
 import { Grid, Button } from 'semantic-ui-react';
 import { Field, Formik, Form } from 'formik';
 
-import {
-	TextField,
-	NumberField,
-	DiagnosisSelection,
-} from '../AddPatientModal/FormField';
-import { HealthCheckEntry, HealthCheckRating } from '../types';
+import { TextField, DiagnosisSelection } from '../AddPatientModal/FormField';
+import { OccupationalHealthcareEntry } from '../types';
 import { useStateValue } from '../state';
 
-export type EntryFormValues = Omit<HealthCheckEntry, 'id'>;
+export type OccuFormValues = Omit<OccupationalHealthcareEntry, 'id'>;
 
 interface Props {
-	onSubmit: (values: EntryFormValues) => void;
+	onSubmit: (values: OccuFormValues) => void;
 	onCancel: () => void;
 }
 
-export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
+export const AddOccuHCForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 	const [{ diagnosis }] = useStateValue();
 
 	return (
@@ -27,8 +23,12 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 				date: '',
 				specialist: '',
 				diagnosisCodes: [],
-				type: 'HealthCheck',
-				healthCheckRating: HealthCheckRating.Healthy,
+				type: 'OccupationalHealthcare',
+				employerName: '',
+				sickLeave: {
+					startDate: '',
+					endDate: '',
+				},
 			}}
 			onSubmit={onSubmit}
 			validate={(values) => {
@@ -46,8 +46,8 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 				if (!values.type) {
 					errors.type = requiredError;
 				}
-				if (!values.healthCheckRating && values.healthCheckRating !== 0) {
-					errors.healthCheckRating = requiredError;
+				if (!values.employerName) {
+					errors.employerName = requiredError;
 				}
 				return errors;
 			}}
@@ -73,23 +73,34 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 							name="specialist"
 							component={TextField}
 						/>
-						<Field
-							label="Type"
-							placeholder="HealthCheck"
-							name="type"
-							component={TextField}
-						/>
 						<DiagnosisSelection
 							setFieldValue={setFieldValue}
 							setFieldTouched={setFieldTouched}
 							diagnoses={Object.values(diagnosis)}
 						/>
 						<Field
-							label="Health Check Rating"
-							name="healthCheckRating"
-							component={NumberField}
-							min={0}
-							max={3}
+							label="Type"
+							placeholder="OccupationalHealthcare"
+							name="type"
+							component={TextField}
+						/>
+						<Field
+							label="Employer Name"
+							placeholder="Employer Name"
+							name="employerName"
+							component={TextField}
+						/>
+						<Field
+							label="Start Date"
+							placeholder="YYYY-MM-DD"
+							name="sickLeave.startDate"
+							component={TextField}
+						/>
+						<Field
+							label="End Date"
+							placeholder="YYYY-MM-DD"
+							name="sickLeave.endDate"
+							component={TextField}
 						/>
 						<Grid>
 							<Grid.Column floated="left" width={5}>
@@ -115,4 +126,4 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 	);
 };
 
-export default AddEntryForm;
+export default AddOccuHCForm;

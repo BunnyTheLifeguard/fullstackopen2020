@@ -5,9 +5,16 @@ import { Icon, Button } from 'semantic-ui-react';
 
 import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 import AddEntryModal from '../AddEntryModal';
+import { OccuFormValues } from '../AddOccuHCModal/AddOccuHCForm';
+import AddOccuHCModal from '../AddOccuHCModal';
 import { useStateValue, addEntry } from '../state';
 
-import { Patient, Entry, HealthCheckEntry } from '../types';
+import {
+	Patient,
+	Entry,
+	HealthCheckEntry,
+	OccupationalHealthcareEntry,
+} from '../types';
 import { apiBaseUrl } from '../constants';
 import HoEntry from './HospitalEntry';
 import OccupationalHCEntry from './OccupationalHCEntry';
@@ -21,11 +28,18 @@ const PatientDetails: React.FC = () => {
 	const [patient, setPatient] = React.useState<Patient | undefined>();
 	const [entries, setEntries] = React.useState<Entry[]>();
 
-	const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+	const [modalHCOpen, setModalHCOpen] = React.useState<boolean>(false);
+	const [modalOHCOpen, setModalOHCOpen] = React.useState<boolean>(false);
 
-	const openModal = (): void => setModalOpen(true);
-	const closeModal = (): void => {
-		setModalOpen(false);
+	const openHCModal = (): void => setModalHCOpen(true);
+	const closeHCModal = (): void => {
+		setModalHCOpen(false);
+		setError(undefined);
+	};
+
+	const openOHCModal = (): void => setModalOHCOpen(true);
+	const closeOHCModal = (): void => {
+		setModalOHCOpen(false);
 		setError(undefined);
 	};
 
@@ -56,7 +70,25 @@ const PatientDetails: React.FC = () => {
 				entries.push(newEntry);
 				setEntries(entries);
 			}
-			closeModal();
+			closeHCModal();
+		} catch (e) {
+			console.error(e.response.data);
+			setError(e.response.data.error);
+		}
+	};
+
+	const submitNewOccu = async (values: OccuFormValues) => {
+		try {
+			const { data: newEntry } = await axios.post<OccupationalHealthcareEntry>(
+				`${apiBaseUrl}/patients/${id}/entries`,
+				values
+			);
+			dispatch(addEntry(newEntry));
+			if (entries) {
+				entries.push(newEntry);
+				setEntries(entries);
+			}
+			closeOHCModal();
 		} catch (e) {
 			console.error(e.response.data);
 			setError(e.response.data.error);
@@ -99,12 +131,23 @@ const PatientDetails: React.FC = () => {
 					occupation: {patient.occupation}
 				</p>
 				<AddEntryModal
-					modalOpen={modalOpen}
+					modalOpen={modalHCOpen}
 					onSubmit={submitNewEntry}
 					error={error}
-					onClose={closeModal}
+					onClose={closeHCModal}
 				/>
-				<Button onClick={() => openModal()}>Add new entry</Button>
+				<Button onClick={() => openHCModal()}>
+					Add new Health Check Entry
+				</Button>
+				<AddOccuHCModal
+					modalOpen={modalOHCOpen}
+					onSubmit={submitNewOccu}
+					error={error}
+					onClose={closeOHCModal}
+				/>
+				<Button onClick={() => openOHCModal()}>
+					Add new OccupationalHealthcare Entry
+				</Button>
 				<h3>entries</h3>
 				{patient.entries.length > 0 && (
 					<div>

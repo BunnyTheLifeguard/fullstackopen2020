@@ -8,6 +8,7 @@ import {
 	HospitalEntry,
 	EntryType,
 	Discharge,
+	SickLeave,
 } from './types';
 
 const isString = (text: any): text is string => {
@@ -103,7 +104,7 @@ const parseEmployer = (employer: any): string => {
 };
 
 const parseHCRating = (rating: any): number => {
-	if (rating !== 0 && !rating || !isNumber(rating)) {
+	if ((rating !== 0 && !rating) || !isNumber(rating)) {
 		throw new Error('Incorrect or missing health rating: ' + rating);
 	}
 	return rating;
@@ -130,15 +131,22 @@ const parseDiagnosisCodes = (code: any): string[] => {
 	return code;
 };
 
+const parseSickLeave = (dates: any): SickLeave => {
+	if (!isDate(dates.startDate) || !isDate(dates.endDate)) {
+		throw new Error('Incorrect sick leave date(s): ' + dates);
+	}
+	return dates;
+};
+
 export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 	if (object.type === 'HealthCheck') {
 		const newHCEntry: Omit<HealthCheckEntry, 'id'> = {
 			description: parseDescription(object.description),
 			date: parseDate(object.date),
 			specialist: parseSpecialist(object.specialist),
-			healthCheckRating: parseHCRating(object.healthCheckRating),
-			type: parseEntryType(object.type),
 			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+			type: parseEntryType(object.type),
+			healthCheckRating: parseHCRating(object.healthCheckRating),
 		};
 		return newHCEntry;
 	} else if (object.type === 'OccupationalHealthcare') {
@@ -147,7 +155,9 @@ export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 			date: parseDate(object.date),
 			specialist: parseSpecialist(object.specialist),
 			type: parseEntryType(object.type),
+			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
 			employerName: parseEmployer(object.employerName),
+			sickLeave: parseSickLeave(object.sickLeave),
 		};
 		return newOHCEntry;
 	} else {
@@ -156,6 +166,7 @@ export const toNewEntry = (object: any): Omit<Entry, 'id'> => {
 			date: parseDate(object.date),
 			specialist: parseSpecialist(object.specialist),
 			type: parseEntryType(object.type),
+			diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
 			discharge: parseDischarge(object.discharge),
 		};
 		return newHEntry;
