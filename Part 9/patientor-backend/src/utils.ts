@@ -103,7 +103,7 @@ const parseEmployer = (employer: any): string => {
 };
 
 const parseHCRating = (rating: any): number => {
-	if (!rating || !isNumber(rating) || rating > 4 || rating < 0) {
+	if (rating !== 0 && !rating || !isNumber(rating)) {
 		throw new Error('Incorrect or missing health rating: ' + rating);
 	}
 	return rating;

@@ -3,7 +3,7 @@ import { Grid, Button } from 'semantic-ui-react';
 import { Field, Formik, Form } from 'formik';
 
 import { TextField, NumberField, DiagnosisSelection } from './FormField';
-import { HealthCheckEntry } from '../types';
+import { HealthCheckEntry, HealthCheckRating } from '../types';
 import { useStateValue } from '../state';
 
 export type EntryFormValues = Omit<HealthCheckEntry, 'id'>;
@@ -23,7 +23,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 				date: '',
 				specialist: '',
 				type: 'HealthCheck',
-				healthCheckRating: 0,
+				healthCheckRating: HealthCheckRating.Healthy,
 				diagnosisCodes: [],
 			}}
 			onSubmit={onSubmit}
@@ -42,7 +42,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 				if (!values.type) {
 					errors.type = requiredError;
 				}
-				if (!values.healthCheckRating) {
+				if (!values.healthCheckRating && values.healthCheckRating !== 0) {
 					errors.healthCheckRating = requiredError;
 				}
 				return errors;
