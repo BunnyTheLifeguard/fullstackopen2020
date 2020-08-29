@@ -1,40 +1,38 @@
-# Patientor - frontend
+# Patientor - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The frontend for the respective [backend](https://github.com/BunnyTheLifeguard/fullstackopen2020/tree/master/Part%209/patientor-backend) of the patientor exercise using [formik](https://formik.org/) for the entry-forms.
+<br/>
 
-## Available Scripts
+### Main view:
 
-In the project directory, you can run:
+<br/>
 
-### `npm install`
+![Patientor main view](img/main.png)
 
-Install the project dependencies.
+<br/>
+From the main view, the user has the option to add new patients:
+<br/><br/>
 
-### `npm start`
+![Add new patient](img/addPatient.png)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<br/>
+Clicking on a patient's name in the main view reveals more details:
+<br/><br/>
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+![Patient details](img/patientDetails.png)
 
-### `npm test`
+<br/>
+Here, the user can add new entries from three categories regarding the specific patient.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Here is the form of a new Health Check Entry:
+<br/><br/>
 
-### `npm build`
+![Add health check entry](img/addHcEntry.png)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<br/>
+The details of the newly added entry show up right after the former entries. Along with the icons for the type of entry and the "Health Check Rating"
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+(1-4 => Heart color depends on rating) the details only show the codes of the diagnoses:
+<br/><br/>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+![Patient with added HC entry](img/patientAfter.png)
