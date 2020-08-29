@@ -1,6 +1,9 @@
 # Patientor - Frontend
 
 The frontend for the respective [backend](https://github.com/BunnyTheLifeguard/fullstackopen2020/tree/master/Part%209/patientor-backend) of the patientor exercise using [formik](https://formik.org/) for the entry-forms.
+
+## [Deployed version with backend](https://powerful-journey-75375.herokuapp.com/).
+
 <br/>
 
 ### Main view:
